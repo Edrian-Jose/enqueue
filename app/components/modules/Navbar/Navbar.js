@@ -1,37 +1,23 @@
 import styles from "./navbar.module.css";
 
+import AppLogo from "../../elements/AppLogo/AppLogo";
+import SearchBar from "../../elements/SearchBar/SearchBar";
+import LogButton from "./../../elements/LogButton/LogButton";
+
 export default function Navbar() {
   return (
     <div className={styles.navbar}>
       <div className={styles.navdiv}>
-        <img src="/favicon.svg" alt="App Logo" className={styles.appLogo} />
-        <span className={styles.appName}>EnQueue</span>
+        <AppLogo />
       </div>
       <div className={styles.navdiv}>
-        <span className={styles.searchContainer}>
-          <img
-            src="/icons/search-black.svg"
-            alt="Search Icon"
-            className={styles.searchIcon}
-          />
-          <input
-            type="text"
-            placeholder="Search Services"
-            className={styles.searchBar}
-          />
-        </span>
-        <a href="#">
-          <span className={styles.signAction}>
-            <img src="/icons/login-black.svg" alt="Login" />
-            <span>Log In</span>
-          </span>
-        </a>
-        <a href="#">
-          <span className={styles.signAction}>
-            <img src="/icons/signup-black.svg" alt="Sign Up" />
-            <span>Sign Up</span>
-          </span>
-        </a>
+        <SearchBar />
+        <LogButton icon="/icons/login-black.svg" alt="Login" text="Login" />
+        <LogButton
+          icon="/icons/signup-black.svg"
+          alt="Sign Up"
+          text="Sign Up"
+        />
       </div>
     </div>
   );

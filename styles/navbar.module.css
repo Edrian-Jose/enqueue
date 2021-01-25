@@ -1,0 +1,62 @@
+.navbar {
+  background-color: var(--secondary-text);
+  margin-top: 4rem;
+  position: sticky;
+  top: 0px;
+  display: flex;
+  justify-content: space-between;
+  width: 100vw;
+  padding: 1.6875rem 5.3125rem;
+}
+
+.navdiv {
+  display: flex;
+  align-items: center;
+}
+
+.appName {
+  font-size: 1.6875rem;
+  font-family: "Raleway-Bold";
+  margin: auto;
+  text-indent: 1.125rem;
+}
+
+.appLogo {
+  width: 6.3125rem;
+  height: 6.3125rem;
+}
+.searchContainer {
+  padding: 0 0.75em;
+  border: 0.1875rem solid var(--primary);
+  border-radius: 0.25em;
+  margin: 0 2em;
+}
+.searchIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+.searchBar {
+  background: none;
+  outline: none;
+  border: none;
+  margin: auto;
+  height: 3em;
+  padding: 0.75em;
+}
+.searchBar::placeholder {
+  text-transform: uppercase;
+  color: var(--primary);
+}
+.signAction {
+  display: flex;
+  align-items: center;
+  font-size: 1.125rem;
+  text-indent: 0.5em;
+  text-transform: uppercase;
+  margin: 0 1.3125rem;
+}
+
+.signAction img {
+  width: 1.11em;
+  height: 1.11em;
+}

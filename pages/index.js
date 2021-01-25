@@ -1,4 +1,5 @@
 import Head from "next/head";
+import Navbar from "../components/Navbar";
 
 export default function Home() {
   return (
@@ -8,9 +9,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.svg" />
       </Head>
 
-      <h1>
-        Welcome to <a href="https://nextjs.org">Next.js!</a>
-      </h1>
+      <Navbar />
     </div>
   );
 }

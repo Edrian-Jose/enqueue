@@ -1,0 +1,72 @@
+.Footer {
+  background-color: rgb(12, 83, 83);
+  font-family: "Raleway-Regular", sans-serif;
+}
+
+.FooterContainer {
+  max-width: 1300px;
+  margin: auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap-reverse;
+}
+
+.QuickLinks {
+  list-style: none;
+  margin: 0;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  padding-left: 0;
+}
+
+.QuickLinks li {
+  line-height: 1em;
+}
+
+.QuickLinks a p {
+  font-family: "Raleway-Regular", sans-serif;
+  font-size: 12px;
+  margin: 0;
+}
+
+.QuickLinks a:link {
+  color: green;
+  background-color: transparent;
+  text-decoration: none;
+  font-family: r;
+}
+
+.QuickLinks a:visited {
+  color: white;
+  background-color: transparent;
+  text-decoration: none;
+}
+
+.QuickLinks a:hover {
+  color: black;
+  background-color: transparent;
+  text-decoration: none;
+}
+
+.QuickLinks a:active {
+  color: rgb(253, 185, 52);
+  background-color: transparent;
+  text-decoration: none;
+}
+
+.FollowUsText {
+  color: white;
+  margin: 0%;
+  margin-bottom: 2px;
+  padding-top: 20px;
+  padding-bottom: 5px;
+  padding-left: 90px;
+}
+
+.Socials .SocialIcons {
+  width: 22px;
+  height: 22px;
+  padding-right: 3px;
+}

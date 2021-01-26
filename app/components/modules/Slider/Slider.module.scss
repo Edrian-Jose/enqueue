@@ -9,7 +9,6 @@
 .slidesContainer {
   width: 400vw;
   height: inherit;
-  margin-left: -100vw;
   transition: all 1s ease-in-out;
 }
 .sliderContainer img {
@@ -45,10 +44,11 @@
   margin: 0px 0.15625rem;
   cursor: pointer;
   opacity: 0.3;
+  transition: opacity 0.5s ease-in-out;
 }
 
 .sliderButton.active {
-  background-color: black;
+  opacity: 1;
 }
 
 .sliderOverlayContent {
@@ -86,4 +86,5 @@
   padding: 1.5rem 2rem;
   border-radius: 1rem;
   background-color: white;
+  font-weight: 600;
 }

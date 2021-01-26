@@ -7,6 +7,7 @@
   justify-content: space-between;
   width: 100vw;
   padding: 1.6875rem 5.3125rem;
+  z-index: 1000;
 }
 
 .navdiv {

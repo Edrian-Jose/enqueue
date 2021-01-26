@@ -1,6 +1,7 @@
 import Head from "next/head";
 import Footer from "../app/components/modules/Footer/Footer";
 import Navbar from "../app/components/modules/Navbar/Navbar";
+import Slider from "../app/components/modules/Slider/Slider";
 
 export default function Home() {
   return (
@@ -11,6 +12,7 @@ export default function Home() {
       </Head>
 
       <Navbar />
+      <Slider />
       <Footer />
     </div>
   );

@@ -1,0 +1,89 @@
+.sliderContainer {
+  position: relative;
+  font-size: 0;
+  width: 100vw;
+  height: 35rem;
+  overflow: hidden;
+}
+
+.slidesContainer {
+  width: 400vw;
+  height: inherit;
+  margin-left: -100vw;
+  transition: all 1s ease-in-out;
+}
+.sliderContainer img {
+  display: inline-block;
+  width: 100vw;
+  height: 100%;
+  object-fit: cover;
+  margin: 0;
+}
+
+.sliderOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  /* padding: 5.3125rem; */
+}
+
+.sliderButtonsContainer {
+  position: absolute;
+  left: 5.3125rem;
+  bottom: 2.125rem;
+}
+
+.sliderButton {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  background-color: white;
+  border-radius: 50%;
+  margin: 0px 0.15625rem;
+  cursor: pointer;
+  opacity: 0.3;
+}
+
+.sliderButton.active {
+  background-color: black;
+}
+
+.sliderOverlayContent {
+  position: relative;
+  margin-right: 5.3125rem;
+  width: auto;
+  top: 9.75rem;
+  padding-right: 2.5rem;
+}
+
+.sliderOverlayContent div {
+  margin-left: auto;
+  text-align: right;
+}
+
+.appTagline {
+  font-family: "Raleway-Bold";
+  line-height: 4.375rem;
+  color: var(--secondary);
+  width: 43rem;
+  font-size: 3.75rem;
+}
+.appSubTagline {
+  color: var(--secondary-text);
+  width: 35rem;
+  font-size: 1.875rem;
+}
+
+.getStartedButton {
+  position: absolute;
+  right: 2.5rem;
+  display: inline-block;
+  margin-top: 1.6875rem;
+  font-size: 1.6875rem;
+  padding: 1.5rem 2rem;
+  border-radius: 1rem;
+  background-color: white;
+}

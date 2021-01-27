@@ -1,0 +1,20 @@
+.logActionStyle {
+  display: flex;
+  align-items: center;
+  font-size: 1.125rem;
+  text-indent: 0.5em;
+  text-transform: uppercase;
+  margin: 0 1.3125rem;
+  cursor: pointer;
+}
+
+.logActionImgStyle {
+  width: 1.11em;
+  height: 1.11em;
+}
+
+.logActionTextStyle {
+  @media screen and (max-width: 1024px) {
+    display: none;
+  }
+}

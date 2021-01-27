@@ -1,21 +1,10 @@
-export default function LogButton({ icon, alt, text, ...props }) {
-  const logActionStyle = {
-    display: "flex",
-    alignItems: "center",
-    fontSize: "1.125rem",
-    textIndent: "0.5em",
-    textTransform: "uppercase",
-    margin: "0 1.3125rem",
-  };
+import styles from "./LogButton.module.scss";
 
-  const logActionImgStyle = {
-    width: "1.11em",
-    height: "1.11em",
-  };
+export default function LogButton({ icon, alt, text, textStyle, ...props }) {
   return (
-    <span style={logActionStyle}>
-      <img src={icon} alt={alt} style={logActionImgStyle} />
-      <span>{text}</span>
+    <span className={styles.logActionStyle}>
+      <img src={icon} alt={alt} className={styles.logActionImgStyle} />
+      <span style={textStyle} className={styles.logActionTextStyle}>{text}</span>
     </span>
   );
 }

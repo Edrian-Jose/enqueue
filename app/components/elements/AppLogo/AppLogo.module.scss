@@ -1,0 +1,17 @@
+.appLogoStyle {
+  width: 6.3125rem;
+  height: 6.3125rem;
+  cursor: pointer;
+}
+
+.appNameStyle {
+  font-size: 1.6875rem;
+  font-family: "Raleway-Bold";
+  margin: auto;
+  text-indent: 1.125rem;
+  cursor: pointer;
+
+  @media screen and (max-width: 1200px) {
+    display: none;
+  }
+}

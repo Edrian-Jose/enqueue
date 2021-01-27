@@ -17,6 +17,9 @@ export default function Navbar() {
           icon="/icons/signup-black.svg"
           alt="Sign Up"
           text="Sign Up"
+          textStyle={{
+            color: "var(--secondary)",
+          }}
         />
       </div>
     </div>

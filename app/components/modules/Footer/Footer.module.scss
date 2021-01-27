@@ -5,7 +5,7 @@
 }
 
 .FooterContainer {
-  max-width: 1300px;
+  max-width: calc(100vw - 10.625rem);
   margin: auto;
   padding: 0 20px;
   display: flex;
@@ -23,30 +23,23 @@
 }
 
 .QuickLinks li {
-  line-height: 1em;
+  line-height: 1.5rem;
 }
 
 .QuickLinks a p {
   font-family: "Raleway-Regular", sans-serif;
-  font-size: 12px;
+  font-size: 1.25rem;
   margin: 0;
 }
 
-.QuickLinks a:link {
-  color: green;
-  background-color: transparent;
-  text-decoration: none;
-  font-family: r;
-}
-
-.QuickLinks a:visited {
-  color: white;
+.QuickLinks a{
+  color: rgb(255, 255, 255);
   background-color: transparent;
   text-decoration: none;
 }
 
 .QuickLinks a:hover {
-  color: black;
+  color: rgb(226, 226, 226);
   background-color: transparent;
   text-decoration: none;
 }
@@ -61,13 +54,12 @@
   color: white;
   margin: 0%;
   margin-bottom: 2px;
-  padding-top: 20px;
-  padding-bottom: 5px;
-  padding-left: 90px;
+  padding-bottom: 0.5rem;
+  text-align: right;
 }
 
 .Socials .SocialIcons {
-  width: 22px;
-  height: 22px;
-  padding-right: 3px;
+  width: 2rem;
+  height: 2rem;
+  padding-right: 0.25rem;
 }

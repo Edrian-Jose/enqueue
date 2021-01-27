@@ -21,7 +21,7 @@ export default function Slider() {
       setCurrentSlide((currentSlide) =>
         currentSlide == slideImagesSrc.length - 1 ? 0 : currentSlide + 1
       );
-    }, 5000);
+    }, 8000);
 
     return () => clearInterval(interval);
   }, [currentSlide]);
@@ -37,7 +37,9 @@ export default function Slider() {
       <div
         className={classes}
         key={"slideButton" + i}
-            onClick={() => { setCurrentSlide(i) }}
+        onClick={() => {
+          setCurrentSlide(i);
+        }}
       ></div>
     );
   });

@@ -3,7 +3,7 @@ import styles from "./Slider.module.scss";
 
 export default function Slider() {
   const slideImagesSrc = [
-    "/images/1.jpg",
+    "/images/1.jfif",
     "/images/2.jpg",
     "/images/3.jpg",
     "/images/4.jpg",

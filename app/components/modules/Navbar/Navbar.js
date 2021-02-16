@@ -1,26 +1,33 @@
 import styles from "./navbar.module.css";
-
+import Link from "next/link";
 import AppLogo from "../../elements/AppLogo/AppLogo";
-import SearchBar from "../../elements/SearchBar/SearchBar";
-import LogButton from "./../../elements/LogButton/LogButton";
+import DefaultNav from "./DefaultNav";
+import LoginNav from "./LoginNav";
+import RegisterNav from "./RegisterNav";
+import { useRouter } from "next/router";
 
-export default function Navbar() {
+export default function Navbar(props) {
+  const router = useRouter();
+  const Nav = () => {
+    if (router.pathname == "/login") {
+      return <LoginNav />;
+    } else if (router.pathname == "/register") {
+      return <RegisterNav />;
+    } else {
+      return <DefaultNav />;
+    }
+  };
   return (
     <div className={styles.navbar}>
       <div className={styles.navdiv}>
-        <AppLogo />
+        <Link href="/">
+          <a>
+            <AppLogo />
+          </a>
+        </Link>
       </div>
       <div className={styles.navdiv}>
-        <SearchBar />
-        <LogButton icon="/icons/login-black.svg" alt="Login" text="Login" />
-        <LogButton
-          icon="/icons/signup-black.svg"
-          alt="Sign Up"
-          text="Sign Up"
-          textStyle={{
-            color: "var(--secondary)",
-          }}
-        />
+        <Nav />
       </div>
     </div>
   );

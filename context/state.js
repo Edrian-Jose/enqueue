@@ -5,6 +5,7 @@ const AppContext = createContext();
 export function AppWrapper({ children }) {
   let sharedState = {
     name: "edrian",
+    service: "blahblah",
   };
 
   return (

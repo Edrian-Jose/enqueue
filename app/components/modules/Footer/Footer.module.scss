@@ -32,14 +32,14 @@
   margin: 0;
 }
 
-.QuickLinks a{
+.QuickLinks a {
   color: rgb(255, 255, 255);
   background-color: transparent;
   text-decoration: none;
 }
 
 .QuickLinks a:hover {
-  color: rgb(226, 226, 226);
+  color: rgb(117, 103, 103);
   background-color: transparent;
   text-decoration: none;
 }
@@ -59,6 +59,7 @@
 }
 
 .Socials .SocialIcons {
+  display: inline-block;
   width: 2rem;
   height: 2rem;
   padding-right: 0.25rem;

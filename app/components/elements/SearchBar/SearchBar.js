@@ -1,13 +1,9 @@
 import styles from "./SearchBar.module.scss";
-
+import SearchIcon from "@material-ui/icons/Search";
 export default function SearchBar() {
   return (
     <span className={styles.searchContainer}>
-      <img
-        src="/icons/search-black.svg"
-        alt="Search Icon"
-        className={styles.searchIcon}
-      />
+      <SearchIcon/>
       <input
         type="text"
         placeholder="Search Services"

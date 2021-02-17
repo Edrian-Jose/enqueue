@@ -1,12 +1,10 @@
 import Head from "next/head";
 import Footer from "../app/components/modules/Footer/Footer";
 import Navbar from "../app/components/modules/Navbar/Navbar";
-import StarRating from "../app/components/elements/StarRating/StarRating";
 import { useAppContext } from "../app/context/state";
-import Title from "../app/components/elements/Title/Title";
-import Subtitle from "./../app/components/elements/Subtitle/Subtitle";
 import ServiceDetails from "../app/components/modules/ServiceDetails/ServiceDetails";
 import Button from "../app/components/elements/Button/Button";
+import Appointment from "../app/components/elements/Appointment/Appointment";
 
 export default function Home() {
   const globalState = useAppContext();
@@ -32,12 +30,7 @@ export default function Home() {
           <Button>Enqueue</Button>
         </div>
         <div>
-          <div>
-            <div className="bg-gray-200 w-full py-6 px-8 text-xl flex justify-between">
-              <span>Cosmetic whitening - 10:00 AM, January 6, 2021</span>
-              <span>Pending</span>
-            </div>
-          </div>
+          <Appointment />
         </div>
       </div>
       <Footer />

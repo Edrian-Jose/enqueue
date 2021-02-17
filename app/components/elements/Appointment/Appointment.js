@@ -8,9 +8,18 @@ export default function Appointment() {
     display: closed ? "none" : "block",
   };
 
+  const openDescription = () => {
+    console.log("hello");
+  };
+
   return (
     <div>
-      <div className="bg-gray-200 w-full py-6 px-8 text-xl flex justify-between">
+      <div
+        className="bg-gray-200 w-full py-6 px-8 text-xl flex justify-between"
+        onClick={() => {
+          openDescription();
+        }}
+      >
         <span>Cosmetic whitening - 10:00 AM, January 6, 2021</span>
         <span>
           <span className="mx-12">Pending</span>

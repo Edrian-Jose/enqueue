@@ -25,11 +25,12 @@ export default function Home() {
       <Navbar />
       <div className="px-20">
         <ServiceDetails service={service} />
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-8">
           <span className="text-xl">Your appointments to this service</span>
           <Button>Enqueue</Button>
         </div>
         <div>
+          <Appointment />
           <Appointment />
         </div>
       </div>

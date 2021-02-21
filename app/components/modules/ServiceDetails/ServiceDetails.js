@@ -13,6 +13,8 @@ export default function ServiceDetails({ service }) {
       </div>
       <div>
         <Subtitle>{service.time}</Subtitle>
+      </div>
+      <div>
         <Subtitle>{service.address}</Subtitle>
       </div>
     </div>

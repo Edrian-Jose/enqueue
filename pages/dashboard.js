@@ -1,3 +1,4 @@
+
 import Head from "next/head";
 import Footer from "../app/components/modules/Footer/Footer";
 import Navbar from "../app/components/modules/Navbar/Navbar";
@@ -5,6 +6,7 @@ import { useAppContext } from "../app/context/state";
 import ServiceDetails from "../app/components/modules/ServiceDetails/ServiceDetails";
 import Button from "../app/components/elements/Button/Button";
 import Appointment from "../app/components/elements/Appointment/Appointment";
+import TimeTable from "./../app/components/modules/TimeTable/TimeTable";
 
 export default function Home() {
   const globalState = useAppContext();
@@ -24,13 +26,16 @@ export default function Home() {
       </Head>
       <Navbar />
       <div className="px-20">
+        <TimeTable />
         <ServiceDetails service={service} />
         <div className="flex items-center justify-between mb-8">
           <span className="text-xl">Your appointments to this service</span>
           <Button>Enqueue</Button>
         </div>
         <div>
-          <Appointment />
+          <Appointment>
+            <Button>Dismiss</Button>
+          </Appointment>
           <Appointment />
         </div>
       </div>

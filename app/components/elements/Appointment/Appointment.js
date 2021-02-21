@@ -2,7 +2,7 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import { useState } from "react";
 import Button from "../Button/Button";
-export default function Appointment() {
+export default function Appointment({ children }) {
   const [closed, setClosed] = useState(true);
 
   const descriptionStyle = {
@@ -10,12 +10,14 @@ export default function Appointment() {
   };
 
   const description = {
+    title: "Cosmetic whitening",
+    startDate: new Date(2021,1,7,10,0),
     description: "Adjustment of braces lorem ipsum dajad sdasasas ",
-    dateStart: new Date(),
+    dateStart: new Date("03/25/2015"),
     duration: null,
     rejectMessage: null,
     requestor: null,
-    status,
+    status: "Pending",
   };
 
   const border = closed ? "shadow-sm" : "shadow-md";
@@ -29,7 +31,7 @@ export default function Appointment() {
       >
         <span>Cosmetic whitening - 10:00 AM, January 6, 2021</span>
         <span>
-          <span className="mx-12">Pending</span>
+          <span className="mx-12">{description.status}</span>
           {closed ? <ExpandMoreIcon /> : <ExpandLessIcon />}
         </span>
       </div>
@@ -42,9 +44,7 @@ export default function Appointment() {
           <div>Detetime: {description.dateStart.toUTCString()}</div>
         </div>
 
-        <div>
-          <Button>Dismiss</Button>
-        </div>
+        <div>{children}</div>
       </div>
     </div>
   );

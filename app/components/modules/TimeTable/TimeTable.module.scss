@@ -1,0 +1,22 @@
+.appointmentContainer {
+  scrollbar-width: none; /* Firefox */
+}
+.appointmentContainer::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* Track */
+.appointmentContainer::-webkit-scrollbar-track {
+  border-radius: 4px;
+}
+
+/* Handle */
+.appointmentContainer::-webkit-scrollbar-thumb {
+  background: rgba(209, 213, 219);
+  border-radius: 4px;
+}
+
+/* Handle on hover */
+.appointmentContainer::-webkit-scrollbar-thumb:hover {
+  background: #b30000;
+}

@@ -14,7 +14,7 @@ export default function StarRating({ rating, reviewCount }) {
         starSpacing="2px"
         starRatedColor="rgb(254, 186,54)"
       />
-      <span> ({reviewCount})</span>
+      <span> {reviewCount ? `( ${reviewCount} )` : null}</span>
     </span>
   );
 }

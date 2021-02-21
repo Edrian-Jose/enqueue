@@ -1,7 +1,9 @@
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import { useState } from "react";
-import Button from "../Button/Button";
+import Moment from "react-moment";
+import StarRating from "./../StarRating/StarRating";
+
 export default function Appointment({ children }) {
   const [closed, setClosed] = useState(true);
 
@@ -9,15 +11,14 @@ export default function Appointment({ children }) {
     display: closed ? "none" : "block",
   };
 
-  const description = {
-    title: "Cosmetic whitening",
-    startDate: new Date(2021,1,7,10,0),
+  const desc = {
+    title: "Cosmetic whiteningg",
+    startDate: new Date(2021, 1, 7, 23, 0),
+    endDate: new Date(2021, 1, 7, 23, 30),
     description: "Adjustment of braces lorem ipsum dajad sdasasas ",
-    dateStart: new Date("03/25/2015"),
-    duration: null,
-    rejectMessage: null,
-    requestor: null,
+    requestor: "Edrian Jose Ferrer",
     status: "Pending",
+    rating: 4.5,
   };
 
   const border = closed ? "shadow-sm" : "shadow-md";
@@ -29,9 +30,12 @@ export default function Appointment({ children }) {
           setClosed(!closed);
         }}
       >
-        <span>Cosmetic whitening - 10:00 AM, January 6, 2021</span>
         <span>
-          <span className="mx-12">{description.status}</span>
+          {desc.title}
+          <Moment date={desc.startDate} format=" - LT, LL (ddd)" />
+        </span>
+        <span>
+          <span className="mx-12">{desc.status}</span>
           {closed ? <ExpandMoreIcon /> : <ExpandLessIcon />}
         </span>
       </div>
@@ -40,8 +44,23 @@ export default function Appointment({ children }) {
         style={descriptionStyle}
       >
         <div className="text-gray-500 mb-8">
-          <div>Description: {description.description}</div>
-          <div>Detetime: {description.dateStart.toUTCString()}</div>
+          <div>Requester: {desc.requestor}</div>
+          {desc.description ? <div>Description: {desc.description}</div> : ""}
+          <div>
+            Datetime: <Moment date={desc.startDate} format="LT, LL (ddd)" />
+          </div>
+          {desc.endDate ? (
+            <div>
+              Duration: <Moment duration={desc.startDate} date={desc.endDate} />
+            </div>
+          ) : null}
+          {desc.remarks ? <div>Remarks: {desc.remarks}</div> : ""}
+          <div>Status: {desc.status}</div>
+          {desc.rating ? (
+            <div>
+              Rating: <StarRating rating={desc.rating} reviewCount="" />{" "}
+            </div>
+          ) : null}
         </div>
 
         <div>{children}</div>

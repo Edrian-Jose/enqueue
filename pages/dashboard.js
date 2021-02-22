@@ -1,4 +1,3 @@
-
 import Head from "next/head";
 import Footer from "../app/components/modules/Footer/Footer";
 import Navbar from "../app/components/modules/Navbar/Navbar";
@@ -10,6 +9,7 @@ import TimeTable from "./../app/components/modules/TimeTable/TimeTable";
 
 export default function Home() {
   const globalState = useAppContext();
+
   const service = {
     name: "Remudaro Boongaling Dental Clinic",
     rating: 3.7,
@@ -24,13 +24,32 @@ export default function Home() {
         <title>Enqueue - {globalState.service}</title>
         <link rel="icon" href="/favicon.svg" />
       </Head>
+      <div
+        className={
+          "fixed z-50 inset-0 w-full h-full bg-gray-900 bg-opacity-50 text-white transition-opacity duration-500 " +
+          (globalState.sharedState.dialogState == "closed"
+            ? "invisible opacity-0"
+            : "visible opacity-100")
+        }
+      >
+        hello
+      </div>
       <Navbar />
+
       <div className="px-20">
-        <TimeTable />
-        <ServiceDetails service={service} />
-        <div className="flex items-center justify-between mb-8">
+        <TimeTable className="mt-10" />
+        {/* <ServiceDetails service={service} /> */}
+        <div className="flex items-center justify-between my-8">
           <span className="text-xl">Your appointments to this service</span>
-          <Button>Enqueue</Button>
+          <Button
+            onClick={() => {
+              let tempState = { ...globalState.sharedState };
+              tempState.dialogState = "open";
+              globalState.setSharedState(tempState);
+            }}
+          >
+            Enqueue
+          </Button>
         </div>
         <div>
           <Appointment>

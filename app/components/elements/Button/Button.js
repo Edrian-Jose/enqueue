@@ -1,4 +1,4 @@
-export default function Button({ children }) {
+export default function Button({ children, onClick }) {
   const styles = [
     "inline-block",
     "cursor-pointer",
@@ -11,5 +11,9 @@ export default function Button({ children }) {
     "hover:bg-gray-900",
     "hover:shadow-lg",
   ];
-  return <span className={styles.join(" ")}>{children}</span>;
+  return (
+    <span className={styles.join(" ")} onClick={onClick}>
+      {children}
+    </span>
+  );
 }

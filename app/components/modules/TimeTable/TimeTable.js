@@ -1,13 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import styles from "./TimeTable.module.scss";
 import moment from "moment";
+import ServiceDetails from "./../ServiceDetails/ServiceDetails";
 
-export default function TimeTable() {
+export default function TimeTable({ className }) {
   const [datePicked, onChangeDatePicked] = useState(new Date());
   const [loading, setLoading] = useState(0);
-
+  const timeTableRef = useRef(null);
   const timeTableLabels = [...Array(25).keys()].map((v, i) => {
     if (i <= 1) return;
     return (
@@ -16,6 +17,15 @@ export default function TimeTable() {
       </div>
     );
   });
+
+  const service = {
+    name: "Remudaro Boongaling Dental Clinic",
+    rating: 3.7,
+    reviewCount: 59,
+    type: "Dental Clinic",
+    address: "1, J.P Rizal Avenue, Manggahan",
+    time: "8:00 AM -11:00 AM, 12:00PM - 5:00 PM",
+  };
 
   const appointments = [
     {
@@ -33,6 +43,21 @@ export default function TimeTable() {
       endDate: new Date(2021, 1, 21, 2, 37),
       status: "Pending",
     },
+    {
+      startDate: new Date(2021, 1, 21, 8, 40),
+      endDate: new Date(2021, 1, 21, 9, 37),
+      status: "Pending",
+    },
+    {
+      startDate: new Date(2021, 1, 21, 10, 0),
+      endDate: new Date(2021, 1, 21, 11, 37),
+      status: "Approved",
+    },
+    {
+      startDate: new Date(2021, 1, 21, 15, 20),
+      endDate: new Date(2021, 1, 21, 16, 37),
+      status: "Completed",
+    },
   ];
 
   const sortedAppointments = appointments.sort((a, b) => {
@@ -48,18 +73,23 @@ export default function TimeTable() {
   );
   const fullms = 86400000;
   const fullSize = 72.75;
-  const firstAppointmentDate = sortedAppointments[0].startDate;
-  const vacantHoursBfrFirst = firstAppointmentDate.getHours();
 
-  for (let index = 0; index < vacantHoursBfrFirst; index++) {
-    timeTableCardsData.push({
-      size: fullSize / 24 + "rem",
-      type: "bottom-gap",
-    });
-  }
   sortedAppointments.forEach((appointment) => {
     let cardSize = 0;
     let dateGap = appointment.startDate.getTime() - prevDate.getTime();
+    let prevDateHour =
+      prevDate.getMinutes() != 0
+        ? prevDate.getHours() + 1
+        : prevDate.getHours();
+    let currentDateHour = appointment.startDate.getHours();
+    let hourGap = currentDateHour - prevDateHour;
+    for (let index = 0; index < hourGap; index++) {
+      timeTableCardsData.push({
+        size: fullSize / 24 + "rem",
+        type: "bottom-gap",
+      });
+    }
+
     if (appointment.startDate.getMinutes() != 0) {
       cardSize =
         (appointment.startDate.getMinutes() / 60) * (fullSize / 24) + "rem";
@@ -88,6 +118,8 @@ export default function TimeTable() {
         type: "bottom-gap",
       });
     }
+
+    prevDate = appointment.endDate;
   });
 
   const lastAppointmentEndDate =
@@ -166,18 +198,45 @@ export default function TimeTable() {
     return el;
   });
 
-  console.log(timeTableCards);
-
+  useEffect(() => {
+    const timeNow = moment().hour();
+    console.log(timeNow * (fullSize / 24) * 16);
+    timeTableRef.current.scrollTop = timeNow * (fullSize / 24) * 16;
+  });
   return (
-    <div className="flex flex-nowrap h-96">
-      <div className="bg-white flex-auto max-w-sm">
-        {!loading ? <Calendar
-          onChange={onChangeDatePicked}
-          value={datePicked}
-          className="w-60 mx-auto bg-white"
-        /> : null}
+    <div className={"flex flex-nowrap h-96 " + className}>
+      <div className="bg-white flex-auto flex max-w-sm">
+        <div className="px-6">
+          <div>
+            <ServiceDetails service={service} className="mb-10" />
+          </div>
+          <div>View appointments at</div>
+          <div className="mx-auto text-xl font-bold mb-10">
+            {moment(datePicked).format("dddd, ")}
+            <input
+              type="date"
+              value={moment(datePicked.getTime()).format("yyyy-MM-DD")}
+              onChange={(e) => {
+                onChangeDatePicked(new Date(e.target.value));
+              }}
+            />
+          </div>
+          <div>
+            {appointments.filter(({ status }) => status == "Pending").length}{" "}
+            pending appointments
+          </div>
+          <div>
+            {appointments.filter(({ status }) => status == "Approved").length}{" "}
+            approved appointments
+          </div>
+          <div>
+            {appointments.filter(({ status }) => status == "Completed").length}{" "}
+            completed appointments
+          </div>
+        </div>
       </div>
       <div
+        ref={timeTableRef}
         className={[
           "border",
           "flex-auto",

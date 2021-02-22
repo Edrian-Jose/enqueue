@@ -5,7 +5,7 @@ import styles from "./TimeTable.module.scss";
 import moment from "moment";
 import ServiceDetails from "./../ServiceDetails/ServiceDetails";
 
-export default function TimeTable({ className }) {
+export default function TimeTable({ className, appointments }) {
   const [datePicked, onChangeDatePicked] = useState(new Date());
   const [loading, setLoading] = useState(0);
   const timeTableRef = useRef(null);
@@ -27,40 +27,12 @@ export default function TimeTable({ className }) {
     time: "8:00 AM -11:00 AM, 12:00PM - 5:00 PM",
   };
 
-  const appointments = [
-    {
-      startDate: new Date(2021, 1, 21, 3, 0),
-      endDate: new Date(2021, 1, 21, 4, 0),
-      status: "Pending",
-    },
-    {
-      startDate: new Date(2021, 1, 21, 4, 45),
-      endDate: new Date(2021, 1, 21, 5, 0),
-      status: "Pending",
-    },
-    {
-      startDate: new Date(2021, 1, 21, 1, 40),
-      endDate: new Date(2021, 1, 21, 2, 37),
-      status: "Pending",
-    },
-    {
-      startDate: new Date(2021, 1, 21, 8, 40),
-      endDate: new Date(2021, 1, 21, 9, 37),
-      status: "Pending",
-    },
-    {
-      startDate: new Date(2021, 1, 21, 10, 0),
-      endDate: new Date(2021, 1, 21, 11, 37),
-      status: "Approved",
-    },
-    {
-      startDate: new Date(2021, 1, 21, 15, 20),
-      endDate: new Date(2021, 1, 21, 16, 37),
-      status: "Completed",
-    },
-  ];
-
-  const sortedAppointments = appointments.sort((a, b) => {
+  const filteredAppointments = appointments.filter((appointment) => {
+    return (
+      appointment.status == "Approved" || appointment.status == "Completed"
+    );
+  });
+  const sortedAppointments = filteredAppointments.sort((a, b) => {
     return a.startDate.getTime() - b.startDate.getTime();
   });
 
@@ -144,7 +116,7 @@ export default function TimeTable({ className }) {
     let el = null;
     let color = "bg-transparent";
     switch (data.type) {
-      case "Pending":
+      case "Pending Approval":
         color = "bg-red-500";
         break;
       case "Approved":
@@ -200,7 +172,6 @@ export default function TimeTable({ className }) {
 
   useEffect(() => {
     const timeNow = moment().hour();
-    console.log(timeNow * (fullSize / 24) * 16);
     timeTableRef.current.scrollTop = timeNow * (fullSize / 24) * 16;
   });
   return (
@@ -220,10 +191,6 @@ export default function TimeTable({ className }) {
                 onChangeDatePicked(new Date(e.target.value));
               }}
             />
-          </div>
-          <div>
-            {appointments.filter(({ status }) => status == "Pending").length}{" "}
-            pending appointments
           </div>
           <div>
             {appointments.filter(({ status }) => status == "Approved").length}{" "}

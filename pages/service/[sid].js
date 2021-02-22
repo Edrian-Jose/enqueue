@@ -1,20 +1,21 @@
 import Head from "next/head";
-import Footer from "../app/components/modules/Footer/Footer";
-import Navbar from "../app/components/modules/Navbar/Navbar";
-import { useAppContext } from "../app/context/state";
-import Button from "../app/components/elements/Button/Button";
-import Appointment from "../app/components/elements/Appointment/Appointment";
-import TimeTable from "./../app/components/modules/TimeTable/TimeTable";
+import Footer from "../../app/components/modules/Footer/Footer";
+import Navbar from "../../app/components/modules/Navbar/Navbar";
+import { useAppContext } from "../../app/context/state";
+import Button from "../../app/components/elements/Button/Button";
+import Appointment from "../../app/components/elements/Appointment/Appointment";
+import TimeTable from "../../app/components/modules/TimeTable/TimeTable";
+import EnqueueDialog from "../../app/components/modules/EnqueueDialog/EnqueueDialog";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
-import RejectDialog from "./../app/components/modules/RejectDialog/RejectDialog";
-import CancelDialog from "./../app/components/modules/CancelDialog/CancelDialog";
+import RateDialog from "../../app/components/modules/RateDialog/RateDialog";
+import CancelDialog from "../../app/components/modules/CancelDialog/CancelDialog";
 import moment from "moment";
-import ApproveDialog from "./../app/components/modules/ApproveDialog/ApproveDialog";
 
 export default function Home() {
   const router = useRouter();
-  const { dialog } = router.query;
+  const { dialog, sid } = router.query;
+  console.log(sid);
   const globalState = useAppContext();
 
   useEffect(() => {
@@ -32,11 +33,11 @@ export default function Home() {
     time: "Open Time : 8:00 AM -11:00 AM, 12:00PM - 5:00 PM",
   };
 
-  const openApproveDialog = (appointment) => {
+  const openEnqueueDialog = (appointment) => {
     globalState.sharedState.dialog.setContent(
-      <ApproveDialog appointment={appointment} />
+      <EnqueueDialog appointment={appointment} />
     );
-    globalState.sharedState.dialog.setTitle("Approve an appointment");
+    globalState.sharedState.dialog.setTitle("Enqueue an appointment");
     globalState.sharedState.dialog.setState(true);
   };
 
@@ -48,16 +49,12 @@ export default function Home() {
     globalState.sharedState.dialog.setState(true);
   };
 
-  const openRejectDialog = (appointment) => {
+  const openRateDialog = (appointment) => {
     globalState.sharedState.dialog.setContent(
-      <RejectDialog appointment={appointment} />
+      <RateDialog appointment={appointment} />
     );
-    globalState.sharedState.dialog.setTitle("Decline appointment");
+    globalState.sharedState.dialog.setTitle("Rate appointment");
     globalState.sharedState.dialog.setState(true);
-  };
-
-  const completeAppointment = (appointment) => {
-    console.log("completed " + appointment.title);
   };
 
   const appointments = [
@@ -85,16 +82,8 @@ export default function Home() {
     },
     {
       title: "Haircut e",
-      startDate: new Date(2021, 1, 22, 19, 15),
-      endDate: new Date(2021, 1, 22, 20, 30),
-      description: "I want a new haircut",
-      requestor: "Juan Dela Cruz",
-      status: "Approved",
-    },
-    {
-      title: "Haircut e",
-      startDate: new Date(2021, 1, 22, 23, 15),
-      endDate: new Date(2021, 1, 22, 23, 30),
+      startDate: new Date(2021, 1, 22, 21, 15),
+      endDate: new Date(2021, 1, 22, 22, 30),
       description: "I want a new haircut",
       requestor: "Juan Dela Cruz",
       status: "Approved",
@@ -126,9 +115,9 @@ export default function Home() {
     );
   });
 
-  const pendingCompletionAppointments = appointments.filter((appointment) => {
+  const completedAppointments = appointments.filter((appointment) => {
     const now = moment();
-    return appointment.status == "Pending Completion";
+    return appointment.status == "Completed" && !appointment.rating;
   });
 
   const pendingApprovalAppointments = appointments.filter((appointment) => {
@@ -143,30 +132,26 @@ export default function Home() {
     return appointment.status == "Approved" && appointment.startDate > now;
   });
 
+  const appointmentsCount =
+    onDueAppointments.length +
+    pendingApprovalAppointments.length +
+    completedAppointments.length +
+    approvedAppointments.length;
+
   const createCards = (appointments) => {
     return appointments.map((appointment) => {
       let el = null;
-      if (appointment.status == "Pending Approval") {
+      if (appointment.status == "Completed") {
         el = (
-          <React.Fragment>
-            <Button
-              className="ml-4"
-              onClick={() => {
-                openApproveDialog(appointment);
-              }}
-            >
-              Approve
-            </Button>
-            <Button
-              onClick={() => {
-                openRejectDialog(appointment);
-              }}
-            >
-              Reject
-            </Button>
-          </React.Fragment>
+          <Button
+            onClick={() => {
+              openRateDialog(appointment);
+            }}
+          >
+            Rate
+          </Button>
         );
-      } else if (appointment.status == "Approved") {
+      } else {
         el = (
           <Button
             onClick={() => {
@@ -175,26 +160,6 @@ export default function Home() {
           >
             Cancel
           </Button>
-        );
-      } else if (appointment.status == "Pending Completion") {
-        el = (
-          <React.Fragment>
-            <Button
-              className="ml-4"
-              onClick={() => {
-                completeAppointment(appointment);
-              }}
-            >
-              Mark as done
-            </Button>
-            <Button
-              onClick={() => {
-                openCancelDialog(appointment);
-              }}
-            >
-              Cancel
-            </Button>
-          </React.Fragment>
         );
       }
 
@@ -207,9 +172,7 @@ export default function Home() {
   };
 
   const onDueAppointmentCards = createCards(onDueAppointments);
-  const pendingCompletionAppointmentCards = createCards(
-    pendingCompletionAppointments
-  );
+  const completedAppointmentCards = createCards(completedAppointments);
   const pendingApprovalAppointmentCards = createCards(
     pendingApprovalAppointments
   );
@@ -226,39 +189,15 @@ export default function Home() {
 
       <div className="px-20">
         <TimeTable className="mt-10" appointments={appointments} />
-        {onDueAppointments.length > 0 ? (
+        {appointmentsCount > 0 ? (
           <div>
             <div className="flex items-center justify-between my-8">
-              <span className="text-xl">Your on due appointments</span>
+              <span className="text-xl">Your appointments</span>
+              <Button onClick={() => openEnqueueDialog()}>Enqueue</Button>
             </div>
             <div>{onDueAppointmentCards}</div>
-          </div>
-        ) : null}
-        {approvedAppointments.length > 0 ? (
-          <div>
-            <div className="flex items-center justify-between my-8">
-              <span className="text-xl">Your approved appointments</span>
-            </div>
             <div>{approvedAppointmentCards}</div>
-          </div>
-        ) : null}
-        {pendingCompletionAppointments.length > 0 ? (
-          <div>
-            <div className="flex items-center justify-between my-8">
-              <span className="text-xl">
-                Your pending for completion appointments
-              </span>
-            </div>
-            <div>{pendingCompletionAppointmentCards}</div>
-          </div>
-        ) : null}
-        {pendingApprovalAppointments.length > 0 ? (
-          <div>
-            <div className="flex items-center justify-between my-8">
-              <span className="text-xl">
-                Your pending for approval appointments
-              </span>
-            </div>
+            <div>{completedAppointmentCards}</div>
             <div>{pendingApprovalAppointmentCards}</div>
           </div>
         ) : null}

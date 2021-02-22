@@ -1,18 +1,18 @@
-export default function Button({ children, onClick }) {
+export default function Button({ children, className, ...others }) {
   const styles = [
     "inline-block",
-    "cursor-pointer",
     "px-12",
     "py-3",
-    "bg-gray-700",
+    others.disabled ? "bg-gray-400" : "bg-gray-700",
     "text-white",
     "text-xl",
     "rounded-lg",
-    "hover:bg-gray-900",
-    "hover:shadow-lg",
+    others.disabled ? "" : "hover:bg-gray-900",
+    others.disabled ? "" : "hover:shadow-lg",
+    others.disabled ? "cursor-not-allowed" : "cursor-pointer",
   ];
   return (
-    <span className={styles.join(" ")} onClick={onClick}>
+    <span className={styles.join(" ") + " " + className} {...others}>
       {children}
     </span>
   );

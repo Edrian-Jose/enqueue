@@ -4,22 +4,13 @@ import { useState } from "react";
 import Moment from "react-moment";
 import StarRating from "./../StarRating/StarRating";
 
-export default function Appointment({ children }) {
+export default function Appointment({ children, desc }) {
   const [closed, setClosed] = useState(true);
 
   const descriptionStyle = {
     display: closed ? "none" : "block",
   };
 
-  const desc = {
-    title: "Cosmetic whiteningg",
-    startDate: new Date(2021, 1, 7, 23, 0),
-    endDate: new Date(2021, 1, 7, 23, 30),
-    description: "Adjustment of braces lorem ipsum dajad sdasasas ",
-    requestor: "Edrian Jose Ferrer",
-    status: "Pending",
-    rating: 4.5,
-  };
 
   const border = closed ? "shadow-sm" : "shadow-md";
   return (

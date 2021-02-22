@@ -2,10 +2,8 @@ import { useState } from "react";
 import moment from "moment";
 import Button from "./../../elements/Button/Button";
 
-export default function ApproveDialog({ appointment }) {
-  const [appointmentEndDate, setAppointmentEndDate] = useState(
-    moment(appointment.startDate)
-  );
+export default function RejectDialog({appointment}) {
+
 
   const changeDateHandler = (e) => {
     const val = e.target.value;
@@ -22,7 +20,7 @@ export default function ApproveDialog({ appointment }) {
           <input
             type="text"
             className="p-2 border w-full mt-1"
-            placeholder="e.g. Laptop repaisr"
+            placeholder="e.g. Laptoasp repaisr"
             value={appointment.title}
             disabled
           />
@@ -54,18 +52,6 @@ export default function ApproveDialog({ appointment }) {
             disabled
           ></input>
         </div>
-        <div className="flex-auto">
-          <div className="text-gray-500 text-sm px-2 font-semibold">
-            End Date
-          </div>
-          <input
-            className="p-2 border w-full mt-1 "
-            type="datetime-local"
-            value={appointmentEndDate.format("yyyy-MM-DDTHH:mm")}
-            onChange={(e) => changeDateHandler(e)}
-            min={moment(appointment.startDate).format("yyyy-MM-DDTHH:mm")}
-          ></input>
-        </div>
       </div>
       <div className="flex">
         <div className="flex-auto mt-4">
@@ -75,7 +61,7 @@ export default function ApproveDialog({ appointment }) {
           <textarea
             name="description"
             className="border p-2 mt-1 w-full"
-            placeholder="Send message to the requester"
+            placeholder="Describe the reason of declined appointment"
           ></textarea>
         </div>
       </div>

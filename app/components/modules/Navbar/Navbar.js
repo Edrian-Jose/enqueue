@@ -5,6 +5,7 @@ import DefaultNav from "./DefaultNav";
 import LoginNav from "./LoginNav";
 import RegisterNav from "./RegisterNav";
 import { useRouter } from "next/router";
+import UserNav from "./UserNav";
 
 export default function Navbar(props) {
   const router = useRouter();

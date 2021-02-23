@@ -13,7 +13,8 @@ import CancelDialog from "../../app/components/modules/CancelDialog/CancelDialog
 import moment from "moment";
 import { http } from "../../app/utils/apiMethods";
 import { server } from "../../app/utils/config";
-function Service({ service }) {
+
+function Service({ service, appointments }) {
   const router = useRouter();
   const { dialog, sid } = router.query;
 
@@ -49,58 +50,10 @@ function Service({ service }) {
     globalState.sharedState.dialog.setState(true);
   };
 
-  const appointments = [
-    {
-      title: "Cosmetic whiteningg",
-      startDate: new Date(2021, 1, 7, 8, 0),
-      description: "Adjustment of braces lorem ipsum dajad sdasasas ",
-      requestor: "Edrian Jose Ferrer",
-      status: "Pending Approval",
-    },
-    {
-      title: "Cosmetic whiteningg",
-      startDate: new Date(2021, 1, 23, 8, 0),
-      description: "Adjustment of braces lorem ipsum dajad sdasasas ",
-      requestor: "Edrian Jose Ferrer",
-      status: "Pending Approval",
-    },
-    {
-      title: "Haircut",
-      startDate: new Date(2021, 1, 7, 9, 15),
-      endDate: new Date(2021, 1, 7, 9, 30),
-      description: "I want a new haircut",
-      requestor: "Juan Dela Cruz",
-      status: "Approved",
-    },
-    {
-      title: "Haircut e",
-      startDate: new Date(2021, 1, 22, 21, 15),
-      endDate: new Date(2021, 1, 22, 22, 30),
-      description: "I want a new haircut",
-      requestor: "Juan Dela Cruz",
-      status: "Approved",
-    },
-    {
-      title: "Haircut 2",
-      startDate: new Date(2021, 1, 7, 7, 0),
-      endDate: new Date(2021, 1, 7, 7, 20),
-      description: "I need a haircut",
-      requestor: "Juan Delos Santos",
-      status: "Pending Completion",
-    },
-    {
-      title: "Haircut 3",
-      startDate: new Date(2021, 1, 7, 8, 0),
-      endDate: new Date(2021, 1, 7, 8, 20),
-      description: "I need a haircut 2",
-      requestor: "Juan Delos Santos",
-      status: "Completed",
-    },
-  ];
-
   const onDueAppointments = appointments.filter((appointment) => {
     const now = moment();
     return (
+      appointment.endDate &&
       moment(appointment.startDate) <= now &&
       moment(appointment.endDate) > now &&
       appointment.status == "Approved"
@@ -185,18 +138,23 @@ function Service({ service }) {
           appointments={appointments}
           service={service}
         />
-        {appointmentsCount > 0 ? (
-          <div>
-            <div className="flex items-center justify-between my-8">
-              <span className="text-xl">Your appointments</span>
-              <Button onClick={() => openEnqueueDialog()}>Enqueue</Button>
-            </div>
-            <div>{onDueAppointmentCards}</div>
-            <div>{approvedAppointmentCards}</div>
-            <div>{completedAppointmentCards}</div>
-            <div>{pendingApprovalAppointmentCards}</div>
+
+        <div>
+          <div className="flex items-center justify-between my-8">
+            <span className="text-xl">
+              {appointmentsCount > 0 ? "Your" : "No"} appointments
+            </span>
+            <Button onClick={() => openEnqueueDialog()}>Enqueue</Button>
           </div>
-        ) : null}
+          {appointmentsCount > 0 ? (
+            <div>
+              <div>{onDueAppointmentCards}</div>
+              <div>{approvedAppointmentCards}</div>
+              <div>{completedAppointmentCards}</div>
+              <div>{pendingApprovalAppointmentCards}</div>
+            </div>
+          ) : null}
+        </div>
       </div>
       <Footer />
     </div>
@@ -207,6 +165,7 @@ export async function getServerSideProps(context) {
   // Fetch data from external API
 
   let service = null;
+  let appointments = [];
   await http("GET", `${server}/api/service?id=${context.params.sid}`)
     .then((d) => {
       if (d.success) {
@@ -217,8 +176,23 @@ export async function getServerSideProps(context) {
     })
     .catch((e) => console.error(e));
 
+  await http(
+    "GET",
+    `${server}/api/provider/appointments?id=${
+      context.params.sid
+    }&date=${moment().format("YYYY-MM-DD")}`
+  )
+    .then((d) => {
+      if (d.success) {
+        appointments = d.data;
+      } else {
+        console.log("sdsd appointments");
+      }
+    })
+    .catch((e) => console.error(e));
+
   // Pass data to the page via props
-  return { props: { service } };
+  return { props: { service, appointments } };
 }
 
 export default Service;

@@ -74,4 +74,4 @@ const validateAppointment = (appointment) => {
   return schema.validate(appointment);
 };
 
-export { Appointment as Service, validateAppointment };
+export { Appointment, validateAppointment };

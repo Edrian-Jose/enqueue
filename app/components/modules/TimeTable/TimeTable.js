@@ -83,19 +83,21 @@ export default function TimeTable({ className, appointments, service }) {
     prevDate = appointment.endDate;
   });
 
-  const lastAppointmentEndDate =
-    sortedAppointments[sortedAppointments.length - 1].endDate;
+  if (appointments && appointments.length > 0) {
+    const lastAppointmentEndDate =
+      sortedAppointments[sortedAppointments.length - 1].endDate;
 
-  const vacantHoursAftrLastStart =
-    lastAppointmentEndDate.getMinutes() != 0
-      ? lastAppointmentEndDate.getHours() + 1
-      : lastAppointmentEndDate.getHours();
+    const vacantHoursAftrLastStart =
+      lastAppointmentEndDate.getMinutes() != 0
+        ? lastAppointmentEndDate.getHours() + 1
+        : lastAppointmentEndDate.getHours();
 
-  for (let index = vacantHoursAftrLastStart; index < 24; index++) {
-    timeTableCardsData.push({
-      size: fullSize / 24 + "rem",
-      type: "bottom-gap",
-    });
+    for (let index = vacantHoursAftrLastStart; index < 24; index++) {
+      timeTableCardsData.push({
+        size: fullSize / 24 + "rem",
+        type: "bottom-gap",
+      });
+    }
   }
 
   const timeTableCards = timeTableCardsData.map((data, i) => {

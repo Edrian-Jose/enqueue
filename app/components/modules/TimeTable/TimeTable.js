@@ -3,7 +3,7 @@ import styles from "./TimeTable.module.scss";
 import moment from "moment";
 import ServiceDetails from "./../ServiceDetails/ServiceDetails";
 
-export default function TimeTable({ className, appointments }) {
+export default function TimeTable({ className, appointments, service }) {
   const [datePicked, onChangeDatePicked] = useState(new Date());
   const [loading, setLoading] = useState(0);
   const timeTableRef = useRef(null);
@@ -15,15 +15,6 @@ export default function TimeTable({ className, appointments }) {
       </div>
     );
   });
-
-  const service = {
-    name: "Remudaro Boongaling Dental Clinic",
-    rating: 3.7,
-    reviewCount: 59,
-    type: "Dental Clinic",
-    address: "1, J.P Rizal Avenue, Manggahan",
-    time: "8:00 AM -11:00 AM, 12:00PM - 5:00 PM",
-  };
 
   const filteredAppointments = appointments.filter((appointment) => {
     return (

@@ -14,7 +14,7 @@ export default function ServiceDetails({ service, className }) {
         <Subtitle className="ml-4">{service.type}</Subtitle>
       </div>
       <div>
-        <Subtitle>{service.time}</Subtitle>
+        <Subtitle>{service.opentime}</Subtitle>
       </div>
       <div>
         <Subtitle>{service.address}</Subtitle>

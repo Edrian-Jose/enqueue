@@ -11,8 +11,9 @@ import React, { useEffect } from "react";
 import RateDialog from "../../app/components/modules/RateDialog/RateDialog";
 import CancelDialog from "../../app/components/modules/CancelDialog/CancelDialog";
 import moment from "moment";
-
-export default function Home() {
+import { http } from "../../app/utils/apiMethods";
+import { server } from "../../app/utils/config";
+function Service({ service }) {
   const router = useRouter();
   const { dialog, sid } = router.query;
 
@@ -23,15 +24,6 @@ export default function Home() {
       openEnqueueDialog();
     }
   }, [dialog]);
-
-  const service = {
-    name: "Remudaro Boongaling Dental Clinic",
-    rating: 3.7,
-    reviewCount: 59,
-    type: "Dental Clinic",
-    address: "1, J.P Rizal Avenue, Manggahan",
-    time: "Open Time : 8:00 AM -11:00 AM, 12:00PM - 5:00 PM",
-  };
 
   const openEnqueueDialog = (appointment) => {
     globalState.sharedState.dialog.setContent(
@@ -188,7 +180,11 @@ export default function Home() {
       <Navbar />
 
       <div className="px-20">
-        <TimeTable className="mt-10" appointments={appointments} />
+        <TimeTable
+          className="mt-10"
+          appointments={appointments}
+          service={service}
+        />
         {appointmentsCount > 0 ? (
           <div>
             <div className="flex items-center justify-between my-8">
@@ -206,3 +202,23 @@ export default function Home() {
     </div>
   );
 }
+
+export async function getServerSideProps(context) {
+  // Fetch data from external API
+
+  let service = null;
+  await http("GET", `${server}/api/service?id=${context.params.sid}`)
+    .then((d) => {
+      if (d.success) {
+        service = d.data;
+      } else {
+        console.log("sdsd");
+      }
+    })
+    .catch((e) => console.error(e));
+
+  // Pass data to the page via props
+  return { props: { service } };
+}
+
+export default Service;

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+const Joi = require("joi");
 
 /* PetSchema will correspond to a collection in your MongoDB database. */
 const UserSchema = new mongoose.Schema({
@@ -26,8 +27,22 @@ const UserSchema = new mongoose.Schema({
   },
 });
 
+const validateUser = (user) => {
+  const schema = {
+    name: Joi.object({
+      first: Joi.string().trim().required(),
+      last: Joi.string().trim().required(),
+    }),
+    email: Joi.string().trim().required(),
+    password: Joi.string().min(7).trim().required(),
+  };
+
+  return Joi.validate(user, schema);
+};
+
 UserSchema.methods.fullname = function () {
   return `${this.name.first} ${this.name.last}`;
 };
 
 export default mongoose.models.User || mongoose.model("User", UserSchema);
+exports.validateUser = validateUser;

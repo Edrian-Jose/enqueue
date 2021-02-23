@@ -3,11 +3,13 @@ import Navbar from "../app/components/modules/Navbar/Navbar";
 import Footer from "../app/components/modules/Footer/Footer";
 import Button from "./../app/components/elements/Button/Button";
 import { useState } from "react";
-
+import { toast } from "react-toastify";
 export default function login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const login = () => {
+    toast("Wow so easy!");
+  };
   return (
     <div>
       <Head>
@@ -52,6 +54,7 @@ export default function login() {
               </div>
               <div className="mx-auto m-2 mt-10">
                 <div
+                  onClick={() => login()}
                   className="cursor-pointer font-bold text-center w-72 p-3.5"
                   style={{ backgroundColor: "var(--secondary)" }}
                 >

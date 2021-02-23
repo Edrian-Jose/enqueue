@@ -3,13 +3,44 @@ import Navbar from "../app/components/modules/Navbar/Navbar";
 import Footer from "../app/components/modules/Footer/Footer";
 import Button from "./../app/components/elements/Button/Button";
 import { useState } from "react";
+import jwt_decode from "jwt-decode";
+import { http } from "../app/utils/apiMethods";
+import { toast } from "react-toastify";
+import { useRouter } from "next/router";
 
 export default function register2() {
+  const router = useRouter();
   const [name, setName] = useState("");
   const [type, setType] = useState("");
-  const [openTime, setOpenTime] = useState("");
+  const [opentime, setOpenTime] = useState("");
   const [address, setAddress] = useState("");
 
+  const save = () => {
+    const user = jwt_decode(localStorage.getItem("auth"));
+
+    const req = {
+      name,
+      serviceType: type,
+      ownerId: user._id,
+      ownerName: user.name,
+      opentime,
+      address,
+    };
+
+    http("POST", "/api/services", req)
+      .then((data) => {
+        if (data.success) {
+          router.push("/dashboard");
+        } else {
+          toast.error(data.message);
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
+
+  const disabled = !name || !type;
   return (
     <div>
       <Head>
@@ -57,7 +88,7 @@ export default function register2() {
                   <div className="font-medium">Open Time</div>
                   <input
                     type="text"
-                    value={openTime}
+                    value={opentime}
                     placeholder="e.g. 8:00 AM - 12:00 PM, 1:00 PM - 5:00 PM"
                     onChange={(e) => setOpenTime(e.target.value)}
                     className="bg-transparent border p-2 w-full"
@@ -79,10 +110,18 @@ export default function register2() {
               <div className="flex mt-4">
                 <div className="m-2 flex-1">
                   <div
-                    className="cursor-pointer font-bold text-center w-full p-3.5 text-white"
+                    onClick={() => {
+                      if (!disabled) {
+                        save();
+                      }
+                    }}
+                    className={
+                      "font-bold text-center w-full p-3.5 text-white " +
+                      (disabled ? "cursor-not-allowed" : "cursor-pointer")
+                    }
                     style={{ backgroundColor: "var(--secondary)" }}
                   >
-                    Save
+                    Provider
                   </div>
                 </div>
               </div>

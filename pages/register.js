@@ -142,6 +142,11 @@ export default function register() {
                 </div>
                 <div className="m-2 flex-1">
                   <div
+                    onClick={() => {
+                      if (!disabled) {
+                        register("provider");
+                      }
+                    }}
                     className={
                       "font-bold text-center w-full p-3.5 text-white " +
                       (disabled ? "cursor-not-allowed" : "cursor-pointer")

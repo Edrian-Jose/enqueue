@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Slider.module.scss";
+import Link from "next/link";
+import { useAppContext } from "../../../context/state";
 
 export default function Slider() {
+  const global = useAppContext();
   const slideImagesSrc = [
     "/images/1.jfif",
     "/images/2.jpg",
@@ -60,7 +63,13 @@ export default function Slider() {
             Book your daily Scheme in over 1 Million business all over the
             Philippines
           </div>
-          <div className={styles.getStartedButton}>{"Get Started >"}</div>
+          {!global.sharedState.user ? (
+            <Link href="/register">
+              <a>
+                <div className={styles.getStartedButton}>{"Get Started >"}</div>
+              </a>
+            </Link>
+          ) : null}
         </div>
       </div>
       <div className={styles.slidesContainer} style={slidesContainerStyle}>

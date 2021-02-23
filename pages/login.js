@@ -24,6 +24,8 @@ export default function login() {
           const userData = jwt_decode(data.data);
           if (userData.type == "provider" && !userData.completed) {
             router.push("/register2");
+          } else if (userData.type == "provider" && userData.completed) {
+            router.push("/dashboard");
           } else {
             router.push("/");
           }

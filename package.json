@@ -13,6 +13,7 @@
     "autoprefixer": "^10.2.4",
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.33",
+    "mongoose": "^5.11.17",
     "next": "10.0.5",
     "postcss": "^8.2.6",
     "react": "17.0.1",

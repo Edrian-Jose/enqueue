@@ -4,12 +4,11 @@ import Footer from "../app/components/modules/Footer/Footer";
 import Button from "./../app/components/elements/Button/Button";
 import { useState } from "react";
 
-export default function register() {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [cpassword, setCPassword] = useState("");
+export default function register2() {
+  const [name, setName] = useState("");
+  const [type, setType] = useState("");
+  const [openTime, setOpenTime] = useState("");
+  const [address, setAddress] = useState("");
 
   return (
     <div>
@@ -27,81 +26,63 @@ export default function register() {
           <div className="flex items-center flex-1">
             <div className="flex flex-1 flex-col p-14">
               <div className="font-extrabold text-3xl text-center mb-8">
-                Getting Started
+                Service Registration
               </div>
               <div className="flex">
                 <div className="m-2 flex-1">
-                  <div className="font-medium">First Name</div>
+                  <div className="font-medium">Service Name</div>
                   <input
                     type="text"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
+                    value={name}
+                    placeholder="e.g. ABC Dental Clinic"
+                    onChange={(e) => setName(e.target.value)}
                     className="bg-transparent border p-2 w-full"
                   />
                 </div>
+              </div>
+              <div className="flex">
                 <div className="m-2 flex-1">
-                  <div className="font-medium">Last Name</div>
+                  <div className="font-medium">Service Type</div>
                   <input
                     type="text"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
+                    value={type}
+                    placeholder="e.g. Dental Clinic, Repair Shop"
+                    onChange={(e) => setType(e.target.value)}
                     className="bg-transparent border p-2 w-full"
                   />
                 </div>
               </div>
               <div className="flex">
                 <div className="m-2 flex-1">
-                  <div className="font-medium">Email</div>
+                  <div className="font-medium">Open Time</div>
                   <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    type="text"
+                    value={openTime}
+                    placeholder="e.g. 8:00 AM - 12:00 PM, 1:00 PM - 5:00 PM"
+                    onChange={(e) => setOpenTime(e.target.value)}
                     className="bg-transparent border p-2 w-full"
                   />
                 </div>
               </div>
               <div className="flex">
                 <div className="m-2 flex-1">
-                  <div className="font-medium">Password</div>
+                  <div className="font-medium">Address</div>
                   <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    type="text"
+                    value={address}
+                    placeholder="e.g. 123 New Street, Brgy. ABC, Pasig, Metro Manila"
+                    onChange={(e) => setAddress(e.target.value)}
                     className="bg-transparent border p-2 w-full"
                   />
                 </div>
               </div>
-              <div className="flex">
-                <div className="m-2 flex-1">
-                  <div className="font-medium">Confirm Password</div>
-                  <input
-                    type="password"
-                    value={cpassword}
-                    onChange={(e) => setCPassword(e.target.value)}
-                    className="bg-transparent border p-2 w-full"
-                  />
-                </div>
-              </div>
-              <div className="flex">
-                <div className="m-2 flex-1">
-                  <div className="font-medium">Sign up as </div>
-                </div>
-              </div>
-              <div className="flex">
-                <div className="m-2 flex-1">
-                  <div
-                    className="cursor-pointer font-bold text-center w-full p-3.5 text-white"
-                    style={{ backgroundColor: "var(--primary)" }}
-                  >
-                    Customer
-                  </div>
-                </div>
+              <div className="flex mt-4">
                 <div className="m-2 flex-1">
                   <div
                     className="cursor-pointer font-bold text-center w-full p-3.5 text-white"
                     style={{ backgroundColor: "var(--secondary)" }}
                   >
-                    Provider
+                    Save
                   </div>
                 </div>
               </div>

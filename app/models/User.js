@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-const Joi = require("joi");
+import Joi from "joi";
+import { jwtSign } from "../utils/apiAuth";
 
 /* PetSchema will correspond to a collection in your MongoDB database. */
 const UserSchema = new mongoose.Schema({
@@ -24,25 +25,51 @@ const UserSchema = new mongoose.Schema({
     type: String,
     minlength: 7,
     required: true,
+    trim: true,
+  },
+  userType: {
+    type: String,
+    enum: ["customer", "provider"],
+    default: "customer",
+    trim: true,
+    required: true,
   },
 });
-
-const validateUser = (user) => {
-  const schema = {
-    name: Joi.object({
-      first: Joi.string().trim().required(),
-      last: Joi.string().trim().required(),
-    }),
-    email: Joi.string().trim().required(),
-    password: Joi.string().min(7).trim().required(),
-  };
-
-  return Joi.validate(user, schema);
-};
 
 UserSchema.methods.fullname = function () {
   return `${this.name.first} ${this.name.last}`;
 };
 
-export default mongoose.models.User || mongoose.model("User", UserSchema);
-exports.validateUser = validateUser;
+UserSchema.methods.generateAuthToken = function () {
+  const unsignedUser = {
+    _id: this._id,
+    name: this.fullname(),
+    type: this.userType,
+  };
+
+  return jwtSign(unsignedUser);
+};
+const User = mongoose.models.User || mongoose.model("User", UserSchema);
+
+const validateUser = (user) => {
+  const schema = Joi.object({
+    name: Joi.object({
+      first: Joi.string().trim().required().label("First Name"),
+      last: Joi.string().trim().required().label("Last Name"),
+    })
+      .required()
+      .label("Name"),
+    email: Joi.string().trim().required().label("Email"),
+    password: Joi.string().min(7).trim().required().label("Password"),
+    userType: Joi.string()
+      .trim()
+      .default("customer")
+      .valid("customer", "provider")
+      .required()
+      .label("User Type"),
+  });
+
+  return schema.validate(user);
+};
+
+export { User, validateUser };

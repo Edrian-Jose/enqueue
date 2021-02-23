@@ -54,7 +54,9 @@ export default async function handler(req, res) {
 
     try {
       userREQ.password = await encryptData(userREQ.password);
+      userREQ["completed"] = userREQ.userType == "customer";
       const user = await User.create(userREQ);
+
       return res
         .status(201)
         .json({ success: true, data: user.generateAuthToken() });

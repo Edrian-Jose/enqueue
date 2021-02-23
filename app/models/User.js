@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import Joi from "joi";
 import { jwtSign } from "../utils/apiAuth";
 
-/* PetSchema will correspond to a collection in your MongoDB database. */
 const UserSchema = new mongoose.Schema({
   name: {
     first: {
@@ -34,6 +33,11 @@ const UserSchema = new mongoose.Schema({
     trim: true,
     required: true,
   },
+  completed: {
+    type: Boolean,
+    default: false,
+    required: true,
+  },
 });
 
 UserSchema.methods.fullname = function () {
@@ -45,6 +49,7 @@ UserSchema.methods.generateAuthToken = function () {
     _id: this._id,
     name: this.fullname(),
     type: this.userType,
+    completed: this.completed,
   };
 
   return jwtSign(unsignedUser);

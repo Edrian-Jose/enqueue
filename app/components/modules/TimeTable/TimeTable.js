@@ -1,6 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-import Calendar from "react-calendar";
-import "react-calendar/dist/Calendar.css";
 import styles from "./TimeTable.module.scss";
 import moment from "moment";
 import ServiceDetails from "./../ServiceDetails/ServiceDetails";

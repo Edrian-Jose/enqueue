@@ -17,7 +17,6 @@
     "next": "10.0.5",
     "postcss": "^8.2.6",
     "react": "17.0.1",
-    "react-calendar": "^3.3.1",
     "react-dom": "17.0.1",
     "react-moment": "^1.1.1",
     "react-star-ratings": "^2.3.0",

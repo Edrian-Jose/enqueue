@@ -15,7 +15,7 @@ import moment from "moment";
 export default function Home() {
   const router = useRouter();
   const { dialog, sid } = router.query;
-  console.log(sid);
+
   const globalState = useAppContext();
 
   useEffect(() => {

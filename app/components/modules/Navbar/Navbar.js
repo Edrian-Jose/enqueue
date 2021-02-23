@@ -37,7 +37,6 @@ export default function Navbar(props) {
       setUser(userData);
       globals.sharedState.setUser(userData);
       const path = router.pathname;
-      console.log(path);
       const conditions = [
         userData.type == "customer" && customerNotAllowedPaths.includes(path),
         userData.type == "provider" && providerNotAllowedPaths.includes(path),

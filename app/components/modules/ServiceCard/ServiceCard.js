@@ -13,7 +13,7 @@ export default function ServiceCard({ service, className }) {
         <Subtitle className="ml-4">{service.type}</Subtitle>
       </div>
       <div className="my-3">
-        <Subtitle>{service.time}</Subtitle>
+        <Subtitle>{service.opentime}</Subtitle>
       </div>
       <div className="my-3">
         <Subtitle>{service.address}</Subtitle>

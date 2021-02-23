@@ -7,7 +7,7 @@ const StarRatings = dynamic(() => import("react-star-ratings"), {
 export default function StarRating({ rating, reviewCount }) {
   return (
     <span className="font-semibold text-gray-500">
-      <span> {rating}</span>
+      <span> {rating ? `( ${rating} )` : null}</span>
       <StarRatings
         rating={parseFloat(rating)}
         starDimension="16px"

@@ -1,6 +1,6 @@
 async function http(method, url = "", data = {}) {
   // Default options are marked with *
-  const response = await fetch(url, {
+  const initialProps = {
     method,
     mode: "cors",
     cache: "no-cache",
@@ -10,8 +10,11 @@ async function http(method, url = "", data = {}) {
     },
     redirect: "follow",
     referrerPolicy: "no-referrer",
-    body: JSON.stringify(data),
-  });
+  };
+  if (method == "POST") {
+    initialProps["body"] = JSON.stringify(data);
+  }
+  const response = await fetch(url, initialProps);
 
   return response.json(); // parses JSON response into native JavaScript objects
 }

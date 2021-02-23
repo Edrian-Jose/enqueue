@@ -10,19 +10,19 @@ export default async function handler(req, res) {
 
   await dbConnect();
   if (method == "GET") {
-    const { keyword } = req.body;
-    if (!keyword)
+    const { q } = req.query;
+    if (!q)
       return res
         .status(400)
         .json({ success: false, message: "Invalid search" });
 
     const matches = await Service.find({
       $or: [
-        { name: { $regex: keyword, $options: "i" } },
-        { serviceType: { $regex: keyword, $options: "i" } },
-        { address: { $regex: keyword, $options: "i" } },
-        { opentime: { $regex: keyword, $options: "i" } },
-        { ownerName: { $regex: keyword, $options: "i" } },
+        { name: { $regex: q, $options: "i" } },
+        { serviceType: { $regex: q, $options: "i" } },
+        { address: { $regex: q, $options: "i" } },
+        { opentime: { $regex: q, $options: "i" } },
+        { ownerName: { $regex: q, $options: "i" } },
       ],
     });
 

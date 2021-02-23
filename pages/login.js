@@ -1,7 +1,6 @@
 import Head from "next/head";
 import Navbar from "../app/components/modules/Navbar/Navbar";
 import Footer from "../app/components/modules/Footer/Footer";
-import Image from "next/image";
 import Button from "./../app/components/elements/Button/Button";
 import { useState } from "react";
 

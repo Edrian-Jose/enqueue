@@ -1,8 +1,16 @@
 import React from "react";
 import Link from "next/link";
 import LogButton from "./../../elements/LogButton/LogButton";
+import { useRouter } from "next/router";
 
-export default function UserNav() {
+export default function UserNav({ user }) {
+  const router = useRouter();
+  const logout = () => {
+    if (window) {
+      localStorage.removeItem("auth");
+      router.push("/logout");
+    }
+  };
   return (
     <React.Fragment>
       <span>Logged in as</span>
@@ -10,22 +18,20 @@ export default function UserNav() {
       <Link href="/settings">
         <a>
           <span className="font-bold ml-2" title="Account Settings">
-            Edrian Jose Ferrer
+            {user.name}
           </span>
         </a>
       </Link>
-      <Link href="/logout">
-        <a>
-          <LogButton
-            icon="/icons/logout-black.svg"
-            alt="Log Out"
-            text="Log Out"
-            textStyle={{
-              color: "var(--secondary)",
-            }}
-          />
-        </a>
-      </Link>
+
+      <LogButton
+        icon="/icons/logout-black.svg"
+        alt="Log Out"
+        text="Log Out"
+        textStyle={{
+          color: "var(--secondary)",
+        }}
+        onClick={() => logout()}
+      />
     </React.Fragment>
   );
 }

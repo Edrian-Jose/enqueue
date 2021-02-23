@@ -4,12 +4,39 @@ import Footer from "../app/components/modules/Footer/Footer";
 import Button from "./../app/components/elements/Button/Button";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { http } from "../app/utils/apiMethods";
+import jwt_decode from "jwt-decode";
+import { useRouter } from "next/router";
+
 export default function login() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const login = () => {
-    toast("Wow so easy!");
+    const req = {
+      email,
+      password,
+    };
+    http("POST", "/api/login", req)
+      .then((data) => {
+        if (data.success) {
+          localStorage.setItem("auth", data.data);
+          const userData = jwt_decode(data.data);
+          if (userData.type == "provider" && !userData.completed) {
+            router.push("/register2");
+          } else {
+            router.push("/");
+          }
+        } else {
+          toast.error(data.message);
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   };
+
+  const disabled = !email || !password;
   return (
     <div>
       <Head>
@@ -54,8 +81,15 @@ export default function login() {
               </div>
               <div className="mx-auto m-2 mt-10">
                 <div
-                  onClick={() => login()}
-                  className="cursor-pointer font-bold text-center w-72 p-3.5"
+                  onClick={() => {
+                    if (!disabled) {
+                      login();
+                    }
+                  }}
+                  className={
+                    "font-bold text-center w-72 p-3.5 " +
+                    (disabled ? "cursor-not-allowed" : "cursor-pointer")
+                  }
                   style={{ backgroundColor: "var(--secondary)" }}
                 >
                   LOGIN

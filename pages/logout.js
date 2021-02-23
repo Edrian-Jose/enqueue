@@ -1,18 +1,18 @@
 import Head from "next/head";
-import Navbar from "../app/components/modules/Navbar/Navbar";
-import Footer from "../app/components/modules/Footer/Footer";
-
+import { useEffect } from "react";
+import { useRouter } from "next/router";
 export default function logut() {
+  const router = useRouter();
+
+  useEffect(function () {
+    router.push("/");
+  }, []);
   return (
     <div>
       <Head>
         <title>Logging out</title>
         <link rel="icon" href="/favicon.svg" />
       </Head>
-
-      <Navbar />
-      <h1>Logout</h1>
-      <Footer />
     </div>
   );
 }

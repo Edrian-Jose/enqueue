@@ -15,7 +15,7 @@ export default function Navbar(props) {
   const globals = useAppContext();
   let [user, setUser] = useState("");
   const Nav = () => {
-    if (user.name) {
+    if (user && user.name) {
       return <UserNav user={user} />;
     } else if (router.pathname == "/login") {
       return <LoginNav />;

@@ -288,7 +288,7 @@ function Service({ serviceDefault, serviceAppointments }) {
   return (
     <div>
       <Head>
-        <title>Enqueue - {globalState.service}</title>
+        <title>Enqueue - {service.name}</title>
         <link rel="icon" href="/favicon.svg" />
       </Head>
 

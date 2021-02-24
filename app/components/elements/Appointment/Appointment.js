@@ -41,7 +41,12 @@ export default function Appointment({ children, desc }) {
           </div>
           {desc.endDate ? (
             <div>
-              Duration: <Moment duration={desc.startDate} date={desc.endDate} />
+              Duration:{" "}
+              <Moment
+                duration={desc.startDate}
+                date={desc.endDate}
+                format="HH:mm"
+              />
             </div>
           ) : null}
           {desc.remarks ? <div>Remarks: {desc.remarks}</div> : ""}

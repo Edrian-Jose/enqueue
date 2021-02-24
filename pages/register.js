@@ -50,7 +50,7 @@ export default function register() {
   return (
     <div>
       <Head>
-        <title>Enqueue - Login</title>
+        <title>Enqueue - Register</title>
         <link rel="icon" href="/favicon.svg" />
       </Head>
 

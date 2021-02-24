@@ -294,7 +294,7 @@ export default function Dashboard() {
   return (
     <div>
       <Head>
-        <title>Enqueue - {globalState.service}</title>
+        <title>Enqueue - Dashboard</title>
         <link rel="icon" href="/favicon.svg" />
       </Head>
 

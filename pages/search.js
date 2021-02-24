@@ -8,6 +8,7 @@ import { http } from "../app/utils/apiMethods";
 import { server } from "./../app/utils/config";
 
 function search({ services }) {
+  const { q } = useRouter().query;
   if (!services) {
     services = [];
   }
@@ -28,7 +29,7 @@ function search({ services }) {
   return (
     <div>
       <Head>
-        <title>Enqueue</title>
+        <title>Enqueue - Search {q}</title>
         <link rel="icon" href="/favicon.svg" />
       </Head>
 

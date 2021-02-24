@@ -44,7 +44,7 @@ export default function register2() {
   return (
     <div>
       <Head>
-        <title>Enqueue - Login</title>
+        <title>Enqueue - Service Registration</title>
         <link rel="icon" href="/favicon.svg" />
       </Head>
 

@@ -16,34 +16,46 @@ export default async function handler(req, res) {
 
   await dbConnect();
   if (method == "GET") {
-    const { id, serviceId } = req.query;
+    const { id, serviceId, type } = req.query;
 
     if (!id)
       return res
         .status(400)
         .json({ success: false, message: "Invalid request" });
 
-    const service = await Service.findById(serviceId);
+    let service = null;
+    if (type == "provider") {
+      service = await Service.findOne({ ownerId: id });
+    } else {
+      service = await Service.findById(serviceId);
+    }
     if (!service) {
       return res
         .status(400)
         .json({ success: false, message: "Service cannot found" });
     }
+    const statuses =
+      type == "customer"
+        ? ["Pending Approval", "Approved", "Completed", "Rejected"]
+        : ["Pending Approval", "Approved"];
 
-    const appointments = await Appointment.find({
-      startDate: {
-        $gte: new Date(datePicked).toISOString(),
-        $lte: new Date(tomorrowDate).toISOString(),
-      },
-      serviceId: id,
-      status: { $in: statuses },
-    }).select(["startDate", "endDate", "status"]);
+    let appointments = [];
+    if (type == "customer") {
+      appointments = await Appointment.find({
+        "requestor.id": id,
+        serviceId: service._id,
+        status: { $in: statuses },
+      });
+    } else {
+      appointments = await Appointment.find({
+        serviceId: service._id,
+        status: { $in: statuses },
+      });
+    }
 
     return res.status(200).json({
       success: true,
       data: appointments,
-      datePicked: new Date(datePicked).toISOString(),
-      tomorrowDate: new Date(tomorrowDate).toISOString(),
     });
   }
 

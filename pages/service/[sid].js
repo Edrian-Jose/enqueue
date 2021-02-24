@@ -13,36 +13,59 @@ import CancelDialog from "../../app/components/modules/CancelDialog/CancelDialog
 import moment from "moment";
 import { http } from "../../app/utils/apiMethods";
 import { server } from "../../app/utils/config";
+import jwt_decode from "jwt-decode";
 
-function Service({ service, appointments, serviceAppointments }) {
+function Service({ service, serviceAppointments }) {
   const router = useRouter();
-
   const [pickedDate, setPickedDate] = useState(moment());
   const [tableAppointments, setTableAppointments] = useState(
     serviceAppointments
   );
+  const [appointments, setAppointments] = useState([]);
   const { dialog } = router.query;
 
   const globalState = useAppContext();
+
+  const getAppointments = () => {
+    const auth = localStorage.getItem("auth");
+
+    if (auth) {
+      const user = jwt_decode(auth);
+      http(
+        "GET",
+        `${server}/api/customer/appointments?serviceId=${router.query.sid}&id=${user._id}&type=customer`
+      )
+        .then((d) => {
+          if (d.success) {
+            setAppointments(d.data);
+            console.log(d.data);
+          } else {
+            console.log("sdsd appointments");
+          }
+        })
+        .catch((e) => console.error(e));
+    }
+  };
 
   useEffect(() => {
     if (dialog == "openEnqueue") {
       openEnqueueDialog();
     }
-  }, [dialog]);
+    getAppointments();
+  }, []);
 
   const handleDateChange = (date, callback) => {
     http(
       "GET",
       `${server}/api/provider/appointments?id=${service._id}&date=${moment(
         date
-      ).format("YYYY-MM-DD")}`
+      ).format("YYYY-MM-DD")}&type=customer`
     )
       .then((d) => {
         if (d.success) {
           if (d.data) {
             setTableAppointments(d.data);
-            callback();
+            callback(false);
           }
         } else {
           console.log("sdsd appointments");
@@ -72,10 +95,10 @@ function Service({ service, appointments, serviceAppointments }) {
   const onDueAppointments = appointments.filter((appointment) => {
     const now = moment();
     return (
+      appointment.status == "Approved" &&
       appointment.endDate &&
       moment(appointment.startDate) <= now &&
-      moment(appointment.endDate) > now &&
-      appointment.status == "Approved"
+      moment(appointment.endDate) > now
     );
   });
 
@@ -87,13 +110,16 @@ function Service({ service, appointments, serviceAppointments }) {
   const pendingApprovalAppointments = appointments.filter((appointment) => {
     const now = moment();
     return (
-      appointment.status == "Pending Approval" && appointment.startDate > now
+      appointment.status == "Pending Approval" &&
+      moment(appointment.startDate) > now
     );
   });
 
   const approvedAppointments = appointments.filter((appointment) => {
     const now = moment();
-    return appointment.status == "Approved" && appointment.startDate > now;
+    return (
+      appointment.status == "Approved" && moment(appointment.startDate) > now
+    );
   });
 
   const appointmentsCount =
@@ -166,7 +192,16 @@ function Service({ service, appointments, serviceAppointments }) {
             <div className="flex items-center justify-between my-8">
               <span className="text-xl">
                 {appointmentsCount > 0 ? "Your" : "No"} appointments
+                <span
+                  className="ml-4 text-gray-400 cursor-pointer hover:text-gray-600"
+                  onClick={() => {
+                    getAppointments();
+                  }}
+                >
+                  Refresh
+                </span>
               </span>
+
               <Button onClick={() => openEnqueueDialog()}>Enqueue</Button>
             </div>
           ) : null}
@@ -187,11 +222,12 @@ function Service({ service, appointments, serviceAppointments }) {
 
 export async function getServerSideProps(context) {
   // Fetch data from external API
-
   let service = null;
   let serviceAppointments = [];
-  let appointments = [];
-  await http("GET", `${server}/api/service?id=${context.params.sid}`)
+  await http(
+    "GET",
+    `${server}/api/service?id=${context.params.sid}&type=customer`
+  )
     .then((d) => {
       if (d.success) {
         service = d.data;
@@ -200,12 +236,11 @@ export async function getServerSideProps(context) {
       }
     })
     .catch((e) => console.error(e));
-
   await http(
     "GET",
     `${server}/api/provider/appointments?id=${
       context.params.sid
-    }&date=${moment().format("YYYY-MM-DD")}`
+    }&date=${moment().format("YYYY-MM-DD")}&type=customer`
   )
     .then((d) => {
       if (d.success) {
@@ -217,7 +252,7 @@ export async function getServerSideProps(context) {
     .catch((e) => console.error(e));
 
   // Pass data to the page via props
-  return { props: { service, serviceAppointments, appointments } };
+  return { props: { service, serviceAppointments } };
 }
 
 export default Service;

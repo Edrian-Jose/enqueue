@@ -11,7 +11,6 @@ export default function Appointment({ children, desc }) {
     display: closed ? "none" : "block",
   };
 
-
   const border = closed ? "shadow-sm" : "shadow-md";
   return (
     <div className={["my-3", border].join(" ")}>
@@ -35,7 +34,7 @@ export default function Appointment({ children, desc }) {
         style={descriptionStyle}
       >
         <div className="text-gray-500 mb-8">
-          <div>Requester: {desc.requestor}</div>
+          <div>Requester: {desc.requestor.name}</div>
           {desc.description ? <div>Description: {desc.description}</div> : ""}
           <div>
             Datetime: <Moment date={desc.startDate} format="LT, LL (ddd)" />

@@ -6,34 +6,121 @@ import Button from "../app/components/elements/Button/Button";
 import Appointment from "../app/components/elements/Appointment/Appointment";
 import TimeTable from "./../app/components/modules/TimeTable/TimeTable";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import RejectDialog from "./../app/components/modules/RejectDialog/RejectDialog";
 import CancelDialog from "./../app/components/modules/CancelDialog/CancelDialog";
 import moment from "moment";
 import ApproveDialog from "./../app/components/modules/ApproveDialog/ApproveDialog";
+import { http } from "../app/utils/apiMethods";
+import { server } from "../app/utils/config";
+import jwt_decode from "jwt-decode";
 
 export default function Dashboard() {
   const router = useRouter();
-  const { dialog } = router.query;
   const globalState = useAppContext();
+  const [service, setService] = useState({
+    name: "Fetching",
+    type: "Fetching",
+    rating: 0,
+    reviewCount: 0,
+    opentime: "Fetching",
+    address: "Fetching",
+  });
+  const [tableAppointments, setTableAppointments] = useState([]);
+  const [appointments, setAppointments] = useState([]);
+
+  const getServiceDetails = () => {
+    const auth = localStorage.getItem("auth");
+    const user = jwt_decode(auth);
+
+    http("GET", `${server}/api/service?id=${user._id}&type=provider`)
+      .then((d) => {
+        if (d.success) {
+          setService(d.data);
+        } else {
+          console.log("sdsd");
+        }
+      })
+      .catch((e) => console.error(e));
+  };
+
+  const getTableAppointments = (date, callback) => {
+    const auth = localStorage.getItem("auth");
+    const user = jwt_decode(auth);
+
+    http(
+      "GET",
+      `${server}/api/provider/appointments?id=${user._id}&date=${moment(
+        date
+      ).format("YYYY-MM-DD")}&type=provider`
+    )
+      .then((d) => {
+        if (d.success) {
+          if (d.data) {
+            setTableAppointments(d.data);
+            callback(false);
+          }
+        } else {
+          console.log("sdsd appointments");
+        }
+      })
+      .catch((e) => console.error(e));
+  };
+
+  const getAppointments = () => {
+    const auth = localStorage.getItem("auth");
+    const user = jwt_decode(auth);
+
+    http(
+      "GET",
+      `${server}/api/customer/appointments?serviceId=${user._id}&id=${user._id}&type=provider`
+    )
+      .then((d) => {
+        if (d.success) {
+          setAppointments(d.data);
+          console.log(d.data);
+        } else {
+          console.log("sdsd appointments");
+        }
+      })
+      .catch((e) => console.error(e));
+  };
+
+  const handleDateChange = (date, callback) => {
+    getTableAppointments(date, callback);
+  };
 
   useEffect(() => {
-    if (dialog == "openEnqueue") {
-      openEnqueueDialog();
-    }
-  }, [dialog]);
+    getServiceDetails();
+    getTableAppointments(new Date(), (b) => {
+      console.log(b);
+    });
+    getAppointments();
+  }, []);
 
-  const service = {
-    name: "Remudaro Boongaling Dental Clinic",
-    rating: 3.7,
-    reviewCount: 59,
-    type: "Dental Clinic",
-    address: "1, J.P Rizal Avenue, Manggahan",
-    time: "Open Time : 8:00 AM -11:00 AM, 12:00PM - 5:00 PM",
+  const changeAppointment = (appointment) => {
+    let tempAppointments = [...appointments];
+    tempAppointments = tempAppointments.map((a) => {
+      if (a._id == appointment._id) {
+        a = appointment;
+      }
+      return a;
+    });
+    setAppointments(tempAppointments);
+  };
+
+  const deleteAppointment = (appointment) => {
+    const tempAppointments = [...appointments];
+    tempAppointments = tempAppointments.filter((a) => {
+      return a._id != appointment._id;
+    });
+    setAppointments(tempAppointments);
   };
 
   const openApproveDialog = (appointment) => {
-    globalState.methods.setContent(<ApproveDialog appointment={appointment} />);
+    globalState.methods.setContent(
+      <ApproveDialog appointment={appointment} callback={changeAppointment} />
+    );
     globalState.methods.setTitle("Approve an appointment");
     globalState.methods.setState(true);
   };
@@ -54,63 +141,6 @@ export default function Dashboard() {
     console.log("completed " + appointment.title);
   };
 
-  const appointments = [
-    {
-      title: "Cosmetic whiteningg",
-      startDate: new Date(2021, 1, 7, 8, 0),
-      description: "Adjustment of braces lorem ipsum dajad sdasasas ",
-      requestor: "Edrian Jose Ferrer",
-      status: "Pending Approval",
-    },
-    {
-      title: "Cosmetic whiteningg",
-      startDate: new Date(2021, 1, 23, 8, 0),
-      description: "Adjustment of braces lorem ipsum dajad sdasasas ",
-      requestor: "Edrian Jose Ferrer",
-      status: "Pending Approval",
-    },
-    {
-      title: "Haircut",
-      startDate: new Date(2021, 1, 7, 9, 15),
-      endDate: new Date(2021, 1, 7, 9, 30),
-      description: "I want a new haircut",
-      requestor: "Juan Dela Cruz",
-      status: "Approved",
-    },
-    {
-      title: "Haircut e",
-      startDate: new Date(2021, 1, 22, 19, 15),
-      endDate: new Date(2021, 1, 22, 20, 30),
-      description: "I want a new haircut",
-      requestor: "Juan Dela Cruz",
-      status: "Approved",
-    },
-    {
-      title: "Haircut e",
-      startDate: new Date(2021, 1, 22, 23, 15),
-      endDate: new Date(2021, 1, 22, 23, 30),
-      description: "I want a new haircut",
-      requestor: "Juan Dela Cruz",
-      status: "Approved",
-    },
-    {
-      title: "Haircut 2",
-      startDate: new Date(2021, 1, 7, 7, 0),
-      endDate: new Date(2021, 1, 7, 7, 20),
-      description: "I need a haircut",
-      requestor: "Juan Delos Santos",
-      status: "Pending Completion",
-    },
-    {
-      title: "Haircut 3",
-      startDate: new Date(2021, 1, 7, 8, 0),
-      endDate: new Date(2021, 1, 7, 8, 20),
-      description: "I need a haircut 2",
-      requestor: "Juan Delos Santos",
-      status: "Completed",
-    },
-  ];
-
   const onDueAppointments = appointments.filter((appointment) => {
     const now = moment();
     return (
@@ -122,19 +152,24 @@ export default function Dashboard() {
 
   const pendingCompletionAppointments = appointments.filter((appointment) => {
     const now = moment();
-    return appointment.status == "Pending Completion";
+    return (
+      appointment.status == "Approved" && moment(appointment.endDate) < now
+    );
   });
 
   const pendingApprovalAppointments = appointments.filter((appointment) => {
     const now = moment();
     return (
-      appointment.status == "Pending Approval" && appointment.startDate > now
+      appointment.status == "Pending Approval" &&
+      moment(appointment.startDate) > now
     );
   });
 
   const approvedAppointments = appointments.filter((appointment) => {
     const now = moment();
-    return appointment.status == "Approved" && appointment.startDate > now;
+    return (
+      appointment.status == "Approved" && moment(appointment.startDate) > now
+    );
   });
 
   const createCards = (appointments) => {
@@ -221,8 +256,11 @@ export default function Dashboard() {
       <div className="px-20">
         <TimeTable
           className="mt-10"
-          appointments={appointments}
+          appointments={tableAppointments}
           service={service}
+          onDateChange={(d, c) => {
+            handleDateChange(d, c);
+          }}
         />
         {onDueAppointments.length > 0 ? (
           <div>

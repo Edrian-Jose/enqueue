@@ -27,8 +27,8 @@ export default function TimeTable({
     onDateChange(new Date(e.target.value), toggleLoading);
   };
 
-  const toggleLoading = () => {
-    setLoading(false);
+  const toggleLoading = (state) => {
+    setLoading(state);
   };
 
   appointments = appointments.map((appointment) => {

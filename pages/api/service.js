@@ -10,13 +10,19 @@ export default async function handler(req, res) {
 
   await dbConnect();
   if (method == "GET") {
-    const { id } = req.query;
+    const { id, type } = req.query;
     if (!id)
       return res
         .status(400)
         .json({ success: false, message: "Invalid request" });
 
-    const service = await Service.findById(id);
+    let service = null;
+    if (type == "provider") {
+      service = await Service.findOne({ ownerId: id });
+    } else {
+      service = await Service.findById(id);
+    }
+
     if (!service) {
       return res
         .status(400)

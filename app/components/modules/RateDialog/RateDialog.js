@@ -3,7 +3,8 @@ import moment from "moment";
 import Button from "./../../elements/Button/Button";
 import dynamic from "next/dynamic";
 import { useAppContext } from "../../../context/state";
-
+import { http } from "../../../utils/apiMethods";
+import { toast } from "react-toastify";
 const StarRatings = dynamic(() => import("react-star-ratings"), {
   ssr: false,
 });
@@ -18,7 +19,7 @@ export default function RateDialog({ appointment, calback }) {
 
   const reset = () => {
     setAppointmentRate(3);
-    globals.methods.useState(false);
+    globals.methods.setState(false);
   };
 
   const rate = () => {
@@ -26,9 +27,7 @@ export default function RateDialog({ appointment, calback }) {
       _id: appointment._id,
       rating: appointmentRate,
     };
-    if (remarks) {
-      req["remarks"] = remarks;
-    }
+    toast;
     http("POST", "/api/customer/rate", req)
       .then((data) => {
         if (data.success) {

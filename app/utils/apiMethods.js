@@ -11,7 +11,7 @@ async function http(method, url = "", data = {}) {
     redirect: "follow",
     referrerPolicy: "no-referrer",
   };
-  if (method == "POST") {
+  if (method == "POST" || method == "PUT") {
     initialProps["body"] = JSON.stringify(data);
   }
   const response = await fetch(url, initialProps);

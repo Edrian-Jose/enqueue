@@ -11,7 +11,7 @@ export default function ServiceDetails({ service, className }) {
       </div>
       <div>
         <StarRating rating={service.rating} reviewCount={service.reviewCount} />
-        <Subtitle className="ml-4">{service.type}</Subtitle>
+        <Subtitle className="ml-4">{service.serviceType}</Subtitle>
       </div>
       <div>
         <Subtitle>{service.opentime}</Subtitle>

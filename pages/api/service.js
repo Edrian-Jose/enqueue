@@ -31,6 +31,28 @@ export default async function handler(req, res) {
     return res.status(201).json({ success: true, data: service });
   }
 
-  if (method == "POST") {
+  if (method == "PUT") {
+    const serviceReq = req.body;
+    const id = serviceReq._id;
+    delete serviceReq._id;
+
+    if (!id)
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid request" });
+
+    try {
+      const service = await Service.findByIdAndUpdate(id, serviceReq, {
+        new: true,
+      });
+      return res.status(200).json({
+        success: true,
+        data: service,
+      });
+    } catch (error) {
+      return res
+        .status(400)
+        .json({ success: false, error, message: "Error occured" });
+    }
   }
 }

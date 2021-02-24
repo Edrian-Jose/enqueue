@@ -10,7 +10,7 @@ export default function ServiceCard({ service, className }) {
       </div>
       <div className="my-3">
         <StarRating rating={service.rating} reviewCount={service.reviewCount} />
-        <Subtitle className="ml-4">{service.type}</Subtitle>
+        <Subtitle className="ml-4">{service.serviceType}</Subtitle>
       </div>
       <div className="my-3">
         <Subtitle>{service.opentime}</Subtitle>

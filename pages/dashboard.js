@@ -14,6 +14,7 @@ import ApproveDialog from "./../app/components/modules/ApproveDialog/ApproveDial
 import { http } from "../app/utils/apiMethods";
 import { server } from "../app/utils/config";
 import jwt_decode from "jwt-decode";
+import { toast } from "react-toastify";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -78,7 +79,6 @@ export default function Dashboard() {
       .then((d) => {
         if (d.success) {
           setAppointments(d.data);
-          console.log(d.data);
         } else {
           console.log("sdsd appointments");
         }
@@ -90,6 +90,13 @@ export default function Dashboard() {
     getTableAppointments(date, callback);
   };
 
+  const handleRefresh = (date) => {
+    getServiceDetails();
+    getTableAppointments(date, (b) => {
+      console.log(b);
+    });
+    getAppointments();
+  };
   useEffect(() => {
     getServiceDetails();
     getTableAppointments(new Date(), (b) => {
@@ -267,7 +274,7 @@ export default function Dashboard() {
           </Button>
         );
       }
-
+      console.log(appointment.status, appointment);
       return (
         <Appointment desc={appointment}>
           <div className="flex flex-row-reverse">{el}</div>
@@ -302,6 +309,7 @@ export default function Dashboard() {
           onDateChange={(d, c) => {
             handleDateChange(d, c);
           }}
+          onRefresh={handleRefresh}
         />
         {onDueAppointments.length > 0 ? (
           <div>

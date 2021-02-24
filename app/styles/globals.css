@@ -55,3 +55,110 @@ a:hover {
   --primary-text: #000000;
   --secondary-text: #ffffff;
 }
+
+//
+
+.AccountSettingsContainer {
+  font-family: "Raleway-Regular", sans-serif;
+  font-style: none;
+}
+
+.AccountSettingsHeader p {
+  font-size: 30px;
+  margin-bottom: 0.2em;
+  padding-left: 1em;
+}
+
+.AccountInfoContainer {
+  border: 0.1em solid;
+  padding: 7%;
+  color: rgb(70, 70, 70);
+}
+
+.AccountInfo form {
+  margin-bottom: 5%;
+}
+
+.AccountInfo label {
+  font-weight: bold;
+  font-size: large;
+  color: rgb(12, 83, 83);
+  display: inline-block;
+  width: 15em;
+  text-align: right;
+  padding-right: 1.5em;
+}
+
+.AccountInfo input {
+  font-size: large;
+}
+
+.ServiceDetailsContainer {
+  border: 0.2em solid;
+  color: rgb(12, 83, 83);
+  padding-top: 1em;
+  padding-left: 7%;
+  padding-right: 7%;
+  padding-bottom: 5%;
+}
+
+.ServiceDetails p {
+  font-size: larger;
+  font-weight: bold;
+  margin-bottom: 2em;
+}
+
+.ServiceInfo form {
+  margin-bottom: 10%;
+}
+
+.ServiceInfo label {
+  font-size: large;
+  color: #feba36;
+  background-color: rgb(12, 83, 83);
+  background-clip: content-box;
+  display: inline-block;
+  width: 15em;
+  text-align: center;
+  padding-right: 1.5em;
+}
+
+.ServiceInfo input {
+  font-size: large;
+}
+
+.AccountSettingsButtonsContainer {
+  margin-top: 2em;
+}
+
+.AccountSettingsButtons {
+  display: inline-block;
+  margin-left: 36%;
+  margin-right: 36%;
+}
+
+.AccountSettingsButtons button {
+  font-size: large;
+  width: 7em;
+}
+
+.submitButton {
+  background-color: #feba36;
+  color: white;
+}
+
+.submitButton:hover {
+  background-color: rgb(12, 83, 83);
+  color: #feba36;
+}
+
+.submitButton:active {
+  background-color: rgb(12, 83, 83);
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+
+.cancelButton:active {
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}

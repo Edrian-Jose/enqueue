@@ -3,12 +3,14 @@ import styles from "./TimeTable.module.scss";
 import moment from "moment";
 import ServiceDetails from "./../ServiceDetails/ServiceDetails";
 import { now } from "mongoose";
+import Button from "../../elements/Button/Button";
 
 export default function TimeTable({
   className,
   appointments,
   service,
   onDateChange,
+  onRefresh,
 }) {
   const [datePicked, onChangeDatePicked] = useState(new Date());
   const [loading, setLoading] = useState(0);
@@ -21,6 +23,7 @@ export default function TimeTable({
       </div>
     );
   });
+
   const handleChangeDatePicked = (e) => {
     onChangeDatePicked(new Date(e.target.value));
     setLoading(true);
@@ -48,12 +51,12 @@ export default function TimeTable({
   });
 
   const timeTableCardsData = [];
-
-  let prevDate = new Date(
+  const resetDate = new Date(
     datePicked.getFullYear(),
     datePicked.getMonth(),
     datePicked.getDate()
   );
+  let prevDate = resetDate;
   const fullms = 86400000;
   const fullSize = 72.75;
 
@@ -105,9 +108,12 @@ export default function TimeTable({
     prevDate = appointment.endDate;
   });
 
-  if (appointments && appointments.length > 0) {
-    const lastAppointmentEndDate =
-      sortedAppointments[sortedAppointments.length - 1].endDate;
+  if (appointments) {
+    let lastAppointmentEndDate = resetDate;
+    if (appointments.length > 0) {
+      lastAppointmentEndDate =
+        sortedAppointments[sortedAppointments.length - 1].endDate;
+    }
 
     const vacantHoursAftrLastStart =
       lastAppointmentEndDate.getMinutes() != 0
@@ -212,6 +218,14 @@ export default function TimeTable({
           <div>
             {appointments.filter(({ status }) => status == "Completed").length}{" "}
             completed appointments
+          </div>
+          <div className="mt-4">
+            <Button
+              style={{ backgroundColor: "var(--secondary)" }}
+              onClick={() => onRefresh(datePicked)}
+            >
+              Refresh
+            </Button>
           </div>
         </div>
       </div>

@@ -8,6 +8,25 @@ export default async function handler(req, res) {
   const { method } = req;
 
   await dbConnect();
+
+  if (method == "GET") {
+    const { id } = req.query;
+    if (!id) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid request" });
+    }
+
+    try {
+      const user = await User.findById(id);
+      return res.status(201).json({ success: true, data: user });
+    } catch (error) {
+      return res
+        .status(400)
+        .json({ success: false, error, message: "Error occured" });
+    }
+  }
+
   if (method == "POST") {
     const userREQ = req.body;
     const { error } = validateUser(userREQ);
@@ -31,6 +50,40 @@ export default async function handler(req, res) {
     } catch (error) {
       return res
         .status(400)
+        .json({ success: false, error, message: "Error occured" });
+    }
+  }
+
+  if (method == "PUT") {
+    const userReq = req.body;
+    const id = userReq._id;
+    delete userReq._id;
+    if (!id)
+      return res
+        .status(403)
+        .json({ success: false, message: "Invalid request" });
+
+    if (userReq.name && (!userReq.name.first || !userReq.name.last)) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Name is incomplete" });
+    }
+
+    if (userReq.password) {
+      userReq.password = await encryptData(userReq.password);
+    }
+
+    try {
+      const user = await User.findByIdAndUpdate(id, userReq, {
+        new: true,
+      });
+      return res.status(200).json({
+        success: true,
+        data: user,
+      });
+    } catch (error) {
+      return res
+        .status(402)
         .json({ success: false, error, message: "Error occured" });
     }
   }

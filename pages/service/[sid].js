@@ -16,14 +16,15 @@ import { server } from "../../app/utils/config";
 import jwt_decode from "jwt-decode";
 import { toast } from "react-toastify";
 
-function Service({ service, serviceAppointments }) {
+function Service({ serviceDefault, serviceAppointments }) {
   const router = useRouter();
   const [pickedDate, setPickedDate] = useState(moment());
+  const [service, setService] = useState(serviceDefault);
   const [tableAppointments, setTableAppointments] = useState(
     serviceAppointments
   );
   const [appointments, setAppointments] = useState([]);
-  const { dialog } = router.query;
+  const { dialog, sid } = router.query;
 
   const globalState = useAppContext();
 
@@ -59,7 +60,7 @@ function Service({ service, serviceAppointments }) {
       const user = jwt_decode(auth);
       http(
         "GET",
-        `${server}/api/customer/appointments?serviceId=${router.query.sid}&id=${user._id}&type=customer`
+        `${server}/api/customer/appointments?serviceId=${sid}&id=${user._id}&type=customer`
       )
         .then((d) => {
           if (d.success) {
@@ -71,6 +72,33 @@ function Service({ service, serviceAppointments }) {
         })
         .catch((e) => console.error(e));
     }
+  };
+
+  const getServiceDetails = () => {
+    http("GET", `${server}/api/service?id=${sid}&type=customer`)
+      .then((d) => {
+        if (d.success) {
+          setService(d.data);
+        } else {
+          console.log("sdsd");
+        }
+      })
+      .catch((e) => console.error(e));
+  };
+
+  const getTableAppointments = (date) => {
+    http(
+      "GET",
+      `${server}/api/provider/appointments?id=${sid}&date=${date}&type=customer`
+    )
+      .then((d) => {
+        if (d.success) {
+          setTableAppointments(d.data);
+        } else {
+          console.log("sdsd appointments");
+        }
+      })
+      .catch((e) => console.error(e));
   };
 
   useEffect(() => {
@@ -98,6 +126,13 @@ function Service({ service, serviceAppointments }) {
         }
       })
       .catch((e) => console.error(e));
+  };
+
+  const handleRefresh = (date) => {
+    getServiceDetails();
+    getTableAppointments(date);
+    getAppointments();
+    console.log("refreshed");
   };
 
   const openEnqueueDialog = (appointment) => {
@@ -129,8 +164,7 @@ function Service({ service, serviceAppointments }) {
       .then((data) => {
         if (data.success) {
           toast.success("Appointment has been dismissed");
-          reset();
-          callback(data.data);
+          deleteAppointment(appointment);
         } else {
           toast.error(data.message);
         }
@@ -267,6 +301,7 @@ function Service({ service, serviceAppointments }) {
           className="mt-10"
           appointments={tableAppointments}
           service={service}
+          onRefresh={handleRefresh}
           onDateChange={(d, c) => {
             handleDateChange(d, c);
           }}
@@ -277,14 +312,6 @@ function Service({ service, serviceAppointments }) {
             <div className="flex items-center justify-between my-8">
               <span className="text-xl">
                 {appointmentsCount > 0 ? "Your" : "No"} appointments
-                <span
-                  className="ml-4 text-gray-400 cursor-pointer hover:text-gray-600"
-                  onClick={() => {
-                    getAppointments();
-                  }}
-                >
-                  Refresh
-                </span>
               </span>
 
               <Button onClick={() => openEnqueueDialog()}>Enqueue</Button>
@@ -308,20 +335,22 @@ function Service({ service, serviceAppointments }) {
 
 export async function getServerSideProps(context) {
   // Fetch data from external API
-  let service = null;
+  let serviceDefault = null;
   let serviceAppointments = [];
+
   await http(
     "GET",
     `${server}/api/service?id=${context.params.sid}&type=customer`
   )
     .then((d) => {
       if (d.success) {
-        service = d.data;
+        serviceDefault = d.data;
       } else {
         console.log("sdsd");
       }
     })
     .catch((e) => console.error(e));
+
   await http(
     "GET",
     `${server}/api/provider/appointments?id=${
@@ -338,7 +367,7 @@ export async function getServerSideProps(context) {
     .catch((e) => console.error(e));
 
   // Pass data to the page via props
-  return { props: { service, serviceAppointments } };
+  return { props: { serviceDefault, serviceAppointments } };
 }
 
 export default Service;

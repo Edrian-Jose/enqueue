@@ -12,7 +12,7 @@ import CancelDialog from "./../app/components/modules/CancelDialog/CancelDialog"
 import moment from "moment";
 import ApproveDialog from "./../app/components/modules/ApproveDialog/ApproveDialog";
 
-export default function Home() {
+export default function Dashboard() {
   const router = useRouter();
   const { dialog } = router.query;
   const globalState = useAppContext();
@@ -225,7 +225,11 @@ export default function Home() {
       <Navbar />
 
       <div className="px-20">
-        <TimeTable className="mt-10" appointments={appointments} />
+        <TimeTable
+          className="mt-10"
+          appointments={appointments}
+          service={service}
+        />
         {onDueAppointments.length > 0 ? (
           <div>
             <div className="flex items-center justify-between my-8">

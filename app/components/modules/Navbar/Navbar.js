@@ -36,6 +36,7 @@ export default function Navbar(props) {
     const providerNotAllowedPaths = ["/search", "/"];
     const provider2NotAllowedPaths = ["/register2"];
     const NotAllowedPaths = ["/login", "/register"];
+    const NoAuthNotAllowedPaths = ["/settings", "/dashboard", "/register2"];
     if (auth) {
       const userData = jwt_decode(auth);
       setUser(userData);
@@ -59,6 +60,15 @@ export default function Navbar(props) {
           } else {
             router.replace(redirects[userData.type]);
           }
+        }
+      }
+    } else {
+      const path = router.pathname;
+      if (NoAuthNotAllowedPaths.includes(path)) {
+        if (history.length > 2) {
+          router.back();
+        } else {
+          router.replace("/");
         }
       }
     }

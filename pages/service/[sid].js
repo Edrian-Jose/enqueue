@@ -65,9 +65,8 @@ function Service({ serviceDefault, serviceAppointments }) {
         .then((d) => {
           if (d.success) {
             setAppointments(d.data);
-            console.log(d.data);
           } else {
-            console.log("sdsd appointments");
+            console.error("Failed to get appointments", d.message);
           }
         })
         .catch((e) => console.error(e));
@@ -80,7 +79,7 @@ function Service({ serviceDefault, serviceAppointments }) {
         if (d.success) {
           setService(d.data);
         } else {
-          console.log("sdsd");
+          console.error("Failed to get service details", d.message);
         }
       })
       .catch((e) => console.error(e));
@@ -95,7 +94,7 @@ function Service({ serviceDefault, serviceAppointments }) {
         if (d.success) {
           setTableAppointments(d.data);
         } else {
-          console.log("sdsd appointments");
+          console.error("Failed to get table appointments", d.message);
         }
       })
       .catch((e) => console.error(e));
@@ -122,7 +121,7 @@ function Service({ serviceDefault, serviceAppointments }) {
             callback(false);
           }
         } else {
-          console.log("sdsd appointments");
+          console.error("Failed to get table appointments", d.message);
         }
       })
       .catch((e) => console.error(e));
@@ -132,7 +131,6 @@ function Service({ serviceDefault, serviceAppointments }) {
     getServiceDetails();
     getTableAppointments(date);
     getAppointments();
-    console.log("refreshed");
   };
 
   const openEnqueueDialog = (appointment) => {
@@ -346,7 +344,7 @@ export async function getServerSideProps(context) {
       if (d.success) {
         serviceDefault = d.data;
       } else {
-        console.log("sdsd");
+        console.errpr("Failed to get initial service details", d.message);
       }
     })
     .catch((e) => console.error(e));
@@ -361,7 +359,7 @@ export async function getServerSideProps(context) {
       if (d.success) {
         serviceAppointments = d.data;
       } else {
-        console.log("sdsd appointments");
+        console.errpr("Failed to get initial table appointments", d.message);
       }
     })
     .catch((e) => console.error(e));

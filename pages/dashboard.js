@@ -39,7 +39,7 @@ export default function Dashboard() {
         if (d.success) {
           setService(d.data);
         } else {
-          console.log("sdsd");
+          console.error("Failed to get service details", d.message);
         }
       })
       .catch((e) => console.error(e));
@@ -62,7 +62,7 @@ export default function Dashboard() {
             callback(false);
           }
         } else {
-          console.log("sdsd appointments");
+          console.error("Failed to get table appointments", d.message);
         }
       })
       .catch((e) => console.error(e));
@@ -80,7 +80,7 @@ export default function Dashboard() {
         if (d.success) {
           setAppointments(d.data);
         } else {
-          console.log("sdsd appointments");
+          console.error("Failed to get appointments", d.message);
         }
       })
       .catch((e) => console.error(e));
@@ -92,17 +92,16 @@ export default function Dashboard() {
 
   const handleRefresh = (date) => {
     getServiceDetails();
-    getTableAppointments(date, (b) => {
-      console.log(b);
-    });
+    getTableAppointments(date, (b) => {});
     getAppointments();
   };
   useEffect(() => {
-    getServiceDetails();
-    getTableAppointments(new Date(), (b) => {
-      console.log(b);
-    });
-    getAppointments();
+    const auth = localStorage.getItem("auth");
+    if (auth) {
+      getServiceDetails();
+      getTableAppointments(new Date(), (b) => {});
+      getAppointments();
+    }
   }, []);
 
   const changeAppointment = (appointment) => {
@@ -274,7 +273,7 @@ export default function Dashboard() {
           </Button>
         );
       }
-      console.log(appointment.status, appointment);
+
       return (
         <Appointment desc={appointment}>
           <div className="flex flex-row-reverse">{el}</div>

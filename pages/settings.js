@@ -66,7 +66,6 @@ export default function Settings() {
       req["password"] = password;
     }
 
-    console.log(req);
     http("PUT", "/api/users", req)
       .then((d) => {
         if (d.success) {
@@ -90,7 +89,6 @@ export default function Settings() {
       address,
     };
 
-    console.log(req);
     http("PUT", "/api/service", req)
       .then((d) => {
         if (d.success) {

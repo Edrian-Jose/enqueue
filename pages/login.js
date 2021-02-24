@@ -55,7 +55,7 @@ export default function login() {
           className="h-auto  mx-auto flex border shadow-sm mt-16"
           style={{ maxWidth: "56rem" }}
         >
-          <div className="flex-1 bg-yellow-200">
+          <div className="flex-1 bg-transparent">
             <img src="/images/login-bg.png" className="w-full h-auto" />
           </div>
           <div

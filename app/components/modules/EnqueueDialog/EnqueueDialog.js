@@ -30,7 +30,7 @@ export default function EnqueueDialog({ serviceId, callback }) {
   const enqueue = () => {
     const req = {
       title,
-      startDate: apppointmentDate.format("yyyy-MM-DDTHH:mm"),
+      startDate: apppointmentDate.format("yyyy-MM-DDTHH:mm ZZ"),
       requestor: {
         id: globals.sharedState.user._id,
         name: globals.sharedState.user.name,

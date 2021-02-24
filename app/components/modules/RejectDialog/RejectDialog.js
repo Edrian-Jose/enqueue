@@ -1,15 +1,34 @@
 import { useState } from "react";
 import moment from "moment";
 import Button from "./../../elements/Button/Button";
+import { http } from "../../../utils/apiMethods";
+import { toast } from "react-toastify";
 
-export default function RejectDialog({appointment}) {
+export default function RejectDialog({ appointment, callback }) {
+  const [remarks, setRemarks] = useState("");
 
-
-  const changeDateHandler = (e) => {
-    const val = e.target.value;
-    const n = moment(val);
-    setAppointmentEndDate(n);
+  const reject = () => {
+    const req = {
+      _id: appointment._id,
+      status: "Rejected",
+    };
+    if (remarks) {
+      req["remarks"] = remarks;
+    }
+    http("POST", "/api/provider/appointments", req)
+      .then((data) => {
+        if (data.success) {
+          toast.success("Appointment has been rejected");
+          callback(data.data);
+        } else {
+          toast.error(data.message);
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   };
+
   return (
     <div>
       <div className="flex">
@@ -35,7 +54,7 @@ export default function RejectDialog({appointment}) {
             type="text"
             className="p-2 border w-full mt-1"
             placeholder="e.g. Laptop repaisr"
-            value={appointment.requestor}
+            value={appointment.requestor.name}
             disabled
           />
         </div>
@@ -59,6 +78,10 @@ export default function RejectDialog({appointment}) {
             Remarks
           </div>
           <textarea
+            value={remarks}
+            onChange={(e) => {
+              setRemarks(e.target.value);
+            }}
             name="description"
             className="border p-2 mt-1 w-full"
             placeholder="Describe the reason of declined appointment"
@@ -66,7 +89,13 @@ export default function RejectDialog({appointment}) {
         </div>
       </div>
       <div className="mt-4 flex flex-row-reverse">
-        <Button>Confirm</Button>
+        <Button
+          onClick={() => {
+            reject();
+          }}
+        >
+          Confirm
+        </Button>
       </div>
     </div>
   );

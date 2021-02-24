@@ -110,7 +110,7 @@ export default function Dashboard() {
   };
 
   const deleteAppointment = (appointment) => {
-    const tempAppointments = [...appointments];
+    let tempAppointments = [...appointments];
     tempAppointments = tempAppointments.filter((a) => {
       return a._id != appointment._id;
     });
@@ -132,7 +132,9 @@ export default function Dashboard() {
   };
 
   const openRejectDialog = (appointment) => {
-    globalState.methods.setContent(<RejectDialog appointment={appointment} />);
+    globalState.methods.setContent(
+      <RejectDialog appointment={appointment} callback={deleteAppointment} />
+    );
     globalState.methods.setTitle("Decline appointment");
     globalState.methods.setState(true);
   };

@@ -12,10 +12,13 @@ export default function CancelDialog({ appointment }) {
     const n = moment(val);
     setAppointmentStartDate(n);
   };
+
   const diff = parseInt(
     moment(appointment.startDate).format("x") -
       parseInt(appointmentStartDate.format("x"))
   );
+
+  const cancel = () => {};
 
   return (
     <div>

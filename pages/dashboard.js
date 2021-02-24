@@ -175,6 +175,7 @@ export default function Dashboard() {
   });
 
   const createCards = (appointments) => {
+    const now = moment();
     return appointments.map((appointment) => {
       let el = null;
       if (appointment.status == "Pending Approval") {
@@ -197,17 +198,11 @@ export default function Dashboard() {
             </Button>
           </React.Fragment>
         );
-      } else if (appointment.status == "Approved") {
-        el = (
-          <Button
-            onClick={() => {
-              openCancelDialog(appointment);
-            }}
-          >
-            Cancel
-          </Button>
-        );
-      } else if (appointment.status == "Pending Completion") {
+      } else if (
+        appointment.status == "Approved" &&
+        moment(appointment.endDate) < now
+      ) {
+        appointment.status = "Pending Completion";
         el = (
           <React.Fragment>
             <Button
@@ -226,6 +221,16 @@ export default function Dashboard() {
               Cancel
             </Button>
           </React.Fragment>
+        );
+      } else if (appointment.status == "Approved") {
+        el = (
+          <Button
+            onClick={() => {
+              openCancelDialog(appointment);
+            }}
+          >
+            Cancel
+          </Button>
         );
       }
 

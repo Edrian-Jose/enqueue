@@ -114,4 +114,34 @@ export default async function handler(req, res) {
         .json({ success: false, error, message: "Error occured" });
     }
   }
+
+  if (method == "DELETE") {
+    const { id } = req.query;
+
+    if (!id)
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid request" });
+
+    const appointment = await Appointment.findById(id);
+    if (!appointment) {
+      return res.status(400).json({
+        success: false,
+        message: "Apppointment not found",
+      });
+    }
+
+    const deleted = await Appointment.remove({ _id: appointment._id });
+    if (deleted && deleted.count == 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Cannot delete, apppointment not found",
+      });
+    } else {
+      return res.status(202).json({
+        success: true,
+        data: appointment,
+      });
+    }
+  }
 }

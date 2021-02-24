@@ -13,7 +13,7 @@ import { useAppContext } from "../../../context/state";
 export default function Navbar(props) {
   const router = useRouter();
   const globals = useAppContext();
-  let [user, setUser] = useState("");
+  let [user, setUser] = useState(null);
   const Nav = () => {
     if (user && user.name) {
       return <UserNav user={user} />;

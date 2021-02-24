@@ -27,7 +27,7 @@ export default function ApproveDialog({ appointment, callback }) {
     const req = {
       _id: appointment._id,
       status: "Approved",
-      endDate: appointmentEndDate.format("YYYY-MM-DDTHH:mm:ss"),
+      endDate: appointmentEndDate.format("YYYY-MM-DDTHH:mm:ssZZ"),
     };
     if (remarks) {
       req["remarks"] = remarks;

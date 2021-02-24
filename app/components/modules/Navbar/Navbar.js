@@ -27,7 +27,11 @@ export default function Navbar(props) {
   };
   useEffect(function () {
     const auth = localStorage.getItem("auth");
-
+    const redirects = {
+      customer: "/",
+      provider: "/dashboard",
+      provider2: "/register2",
+    };
     const customerNotAllowedPaths = ["/dashboard", "/register2"];
     const providerNotAllowedPaths = ["/search", "/"];
     const provider2NotAllowedPaths = ["/register2"];
@@ -47,7 +51,15 @@ export default function Navbar(props) {
       ];
 
       if (conditions.includes(true)) {
-        router.back();
+        if (history.length > 2) {
+          router.back();
+        } else {
+          if (userData.type == "provider" && !userData.completed) {
+            router.replace(redirects["provider2"]);
+          } else {
+            router.replace(redirects[userData.type]);
+          }
+        }
       }
     }
   }, []);

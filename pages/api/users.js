@@ -29,7 +29,9 @@ export default async function handler(req, res) {
         .status(201)
         .json({ success: true, data: user.generateAuthToken() });
     } catch (error) {
-      return res.status(400).json({ success: false, error });
+      return res
+        .status(400)
+        .json({ success: false, error, message: "Error occured" });
     }
   }
 }

@@ -34,7 +34,6 @@ export default async function handler(req, res) {
     const { error } = validateService(serviceReq);
     if (error)
       return res.status(400).json({ success: false, message: error.message });
-    //TODO: test for owner doesn't exists
 
     const owner = await User.findById(serviceReq.ownerId);
     if (!owner) {
@@ -60,7 +59,9 @@ export default async function handler(req, res) {
       await owner.save();
       return res.status(201).json({ success: true, data: service });
     } catch (error) {
-      return res.status(400).json({ success: false, error });
+      return res
+        .status(400)
+        .json({ success: false, error, message: "Error occured" });
     }
   }
 }

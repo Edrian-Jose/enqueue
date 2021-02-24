@@ -25,7 +25,6 @@ export default function EnqueueDialog({ serviceId }) {
   const enqueue = () => {
     const req = {
       title,
-      description,
       startDate: apppointmentDate.format("yyyy-MM-DDTHH:mm"),
       requestor: {
         id: globals.sharedState.user._id,
@@ -34,8 +33,11 @@ export default function EnqueueDialog({ serviceId }) {
       status: "Pending Approval",
       serviceId,
     };
+    if (description) {
+      req["description"] = description;
+    }
 
-    http("POST", "http://localhost:3000/api/customer/appointments", req)
+    http("POST", "/api/customer/appointments", req)
       .then((data) => {
         if (data.success) {
           toast.success("Appointment Created currently pending for approval ");

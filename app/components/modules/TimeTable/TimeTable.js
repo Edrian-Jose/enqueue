@@ -2,8 +2,14 @@ import React, { useState, useRef, useEffect } from "react";
 import styles from "./TimeTable.module.scss";
 import moment from "moment";
 import ServiceDetails from "./../ServiceDetails/ServiceDetails";
+import { now } from "mongoose";
 
-export default function TimeTable({ className, appointments, service }) {
+export default function TimeTable({
+  className,
+  appointments,
+  service,
+  onDateChange,
+}) {
   const [datePicked, onChangeDatePicked] = useState(new Date());
   const [loading, setLoading] = useState(0);
   const timeTableRef = useRef(null);
@@ -15,6 +21,15 @@ export default function TimeTable({ className, appointments, service }) {
       </div>
     );
   });
+  const handleChangeDatePicked = (e) => {
+    onChangeDatePicked(new Date(e.target.value));
+    setLoading(true);
+    onDateChange(new Date(e.target.value), toggleLoading);
+  };
+
+  const toggleLoading = () => {
+    setLoading(false);
+  };
 
   appointments = appointments.map((appointment) => {
     let d = appointment.startDate;
@@ -186,7 +201,7 @@ export default function TimeTable({ className, appointments, service }) {
               type="date"
               value={moment(datePicked.getTime()).format("yyyy-MM-DD")}
               onChange={(e) => {
-                onChangeDatePicked(new Date(e.target.value));
+                handleChangeDatePicked(e);
               }}
             />
           </div>

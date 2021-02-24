@@ -7,15 +7,20 @@ import Appointment from "../../app/components/elements/Appointment/Appointment";
 import TimeTable from "../../app/components/modules/TimeTable/TimeTable";
 import EnqueueDialog from "../../app/components/modules/EnqueueDialog/EnqueueDialog";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import RateDialog from "../../app/components/modules/RateDialog/RateDialog";
 import CancelDialog from "../../app/components/modules/CancelDialog/CancelDialog";
 import moment from "moment";
 import { http } from "../../app/utils/apiMethods";
 import { server } from "../../app/utils/config";
 
-function Service({ service, appointments }) {
+function Service({ service, appointments, serviceAppointments }) {
   const router = useRouter();
+
+  const [pickedDate, setPickedDate] = useState(moment());
+  const [tableAppointments, setTableAppointments] = useState(
+    serviceAppointments
+  );
   const { dialog } = router.query;
 
   const globalState = useAppContext();
@@ -25,6 +30,26 @@ function Service({ service, appointments }) {
       openEnqueueDialog();
     }
   }, [dialog]);
+
+  const handleDateChange = (date, callback) => {
+    http(
+      "GET",
+      `${server}/api/provider/appointments?id=${service._id}&date=${moment(
+        date
+      ).format("YYYY-MM-DD")}`
+    )
+      .then((d) => {
+        if (d.success) {
+          if (d.data) {
+            setTableAppointments(d.data);
+            callback();
+          }
+        } else {
+          console.log("sdsd appointments");
+        }
+      })
+      .catch((e) => console.error(e));
+  };
 
   const openEnqueueDialog = (appointment) => {
     globalState.methods.setContent(<EnqueueDialog serviceId={service._id} />);
@@ -129,8 +154,11 @@ function Service({ service, appointments }) {
       <div className="px-20">
         <TimeTable
           className="mt-10"
-          appointments={appointments}
+          appointments={tableAppointments}
           service={service}
+          onDateChange={(d, c) => {
+            handleDateChange(d, c);
+          }}
         />
 
         <div>
@@ -161,6 +189,7 @@ export async function getServerSideProps(context) {
   // Fetch data from external API
 
   let service = null;
+  let serviceAppointments = [];
   let appointments = [];
   await http("GET", `${server}/api/service?id=${context.params.sid}`)
     .then((d) => {
@@ -180,7 +209,7 @@ export async function getServerSideProps(context) {
   )
     .then((d) => {
       if (d.success) {
-        appointments = d.data;
+        serviceAppointments = d.data;
       } else {
         console.log("sdsd appointments");
       }
@@ -188,7 +217,7 @@ export async function getServerSideProps(context) {
     .catch((e) => console.error(e));
 
   // Pass data to the page via props
-  return { props: { service, appointments } };
+  return { props: { service, serviceAppointments, appointments } };
 }
 
 export default Service;

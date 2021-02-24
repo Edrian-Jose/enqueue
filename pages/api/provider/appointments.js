@@ -19,7 +19,8 @@ export default async function handler(req, res) {
     const tomorrowDate = moment(date).add(1, "d").format("YYYY-MM-DDTHH:mm:ss");
 
     const statuses =
-      parseInt(moment().format("x")) > parseInt(moment(date).format("x"))
+      parseInt(moment(moment().format("YYYY-MM-DD")).format("x")) >
+      parseInt(moment(date).format("x"))
         ? ["Completed"]
         : ["Approved", "Completed"];
 

@@ -11,7 +11,7 @@ export default function UserNav({ user }) {
   const logout = () => {
     if (window) {
       localStorage.removeItem("auth");
-      global.sharedState.setUser(null);
+      global.methods.setUser(null);
       router.push("/logout");
     }
   };

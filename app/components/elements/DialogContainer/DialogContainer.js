@@ -7,7 +7,7 @@ export default function DialogContainer() {
   const global = useAppContext();
 
   const closeDialog = () => {
-    global.sharedState.dialog.setState(false);
+    global.methods.setState(false);
   };
   return (
     <div
@@ -29,9 +29,7 @@ export default function DialogContainer() {
             </div>
           </div>
 
-          <div className="p-4">
-            {global.sharedState.dialog.content}
-          </div>
+          <div className="p-4">{global.sharedState.dialog.content}</div>
         </div>
       </div>
     </div>

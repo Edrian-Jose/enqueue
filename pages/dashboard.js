@@ -33,27 +33,21 @@ export default function Dashboard() {
   };
 
   const openApproveDialog = (appointment) => {
-    globalState.sharedState.dialog.setContent(
-      <ApproveDialog appointment={appointment} />
-    );
-    globalState.sharedState.dialog.setTitle("Approve an appointment");
-    globalState.sharedState.dialog.setState(true);
+    globalState.methods.setContent(<ApproveDialog appointment={appointment} />);
+    globalState.methods.setTitle("Approve an appointment");
+    globalState.methods.setState(true);
   };
 
   const openCancelDialog = (appointment) => {
-    globalState.sharedState.dialog.setContent(
-      <CancelDialog appointment={appointment} />
-    );
-    globalState.sharedState.dialog.setTitle("Cancel appointment");
-    globalState.sharedState.dialog.setState(true);
+    globalState.methods.setContent(<CancelDialog appointment={appointment} />);
+    globalState.methods.setTitle("Cancel appointment");
+    globalState.methods.setState(true);
   };
 
   const openRejectDialog = (appointment) => {
-    globalState.sharedState.dialog.setContent(
-      <RejectDialog appointment={appointment} />
-    );
-    globalState.sharedState.dialog.setTitle("Decline appointment");
-    globalState.sharedState.dialog.setState(true);
+    globalState.methods.setContent(<RejectDialog appointment={appointment} />);
+    globalState.methods.setTitle("Decline appointment");
+    globalState.methods.setState(true);
   };
 
   const completeAppointment = (appointment) => {

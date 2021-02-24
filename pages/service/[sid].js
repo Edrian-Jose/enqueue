@@ -16,7 +16,7 @@ import { server } from "../../app/utils/config";
 
 function Service({ service, appointments }) {
   const router = useRouter();
-  const { dialog, sid } = router.query;
+  const { dialog } = router.query;
 
   const globalState = useAppContext();
 
@@ -27,27 +27,21 @@ function Service({ service, appointments }) {
   }, [dialog]);
 
   const openEnqueueDialog = (appointment) => {
-    globalState.sharedState.dialog.setContent(
-      <EnqueueDialog appointment={appointment} />
-    );
-    globalState.sharedState.dialog.setTitle("Enqueue an appointment");
-    globalState.sharedState.dialog.setState(true);
+    globalState.methods.setContent(<EnqueueDialog serviceId={service._id} />);
+    globalState.methods.setTitle("Enqueue an appointment");
+    globalState.methods.setState(true);
   };
 
   const openCancelDialog = (appointment) => {
-    globalState.sharedState.dialog.setContent(
-      <CancelDialog appointment={appointment} />
-    );
-    globalState.sharedState.dialog.setTitle("Cancel appointment");
-    globalState.sharedState.dialog.setState(true);
+    globalState.methods.setContent(<CancelDialog appointment={appointment} />);
+    globalState.methods.setTitle("Cancel appointment");
+    globalState.methods.setState(true);
   };
 
   const openRateDialog = (appointment) => {
-    globalState.sharedState.dialog.setContent(
-      <RateDialog appointment={appointment} />
-    );
-    globalState.sharedState.dialog.setTitle("Rate appointment");
-    globalState.sharedState.dialog.setState(true);
+    globalState.methods.setContent(<RateDialog appointment={appointment} />);
+    globalState.methods.setTitle("Rate appointment");
+    globalState.methods.setState(true);
   };
 
   const onDueAppointments = appointments.filter((appointment) => {
@@ -140,12 +134,14 @@ function Service({ service, appointments }) {
         />
 
         <div>
-          <div className="flex items-center justify-between my-8">
-            <span className="text-xl">
-              {appointmentsCount > 0 ? "Your" : "No"} appointments
-            </span>
-            <Button onClick={() => openEnqueueDialog()}>Enqueue</Button>
-          </div>
+          {globalState.sharedState.user ? (
+            <div className="flex items-center justify-between my-8">
+              <span className="text-xl">
+                {appointmentsCount > 0 ? "Your" : "No"} appointments
+              </span>
+              <Button onClick={() => openEnqueueDialog()}>Enqueue</Button>
+            </div>
+          ) : null}
           {appointmentsCount > 0 ? (
             <div>
               <div>{onDueAppointmentCards}</div>

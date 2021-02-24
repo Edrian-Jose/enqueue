@@ -7,11 +7,13 @@ import { toast } from "react-toastify";
 import { http } from "../app/utils/apiMethods";
 import jwt_decode from "jwt-decode";
 import { useRouter } from "next/router";
+import { useAppContext } from "../app/context/state";
 
 export default function login() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const globals = useAppContext();
   const login = () => {
     const req = {
       email,
@@ -22,6 +24,7 @@ export default function login() {
         if (data.success) {
           localStorage.setItem("auth", data.data);
           const userData = jwt_decode(data.data);
+          globals.methods.setUser(data.data);
           if (userData.type == "provider" && !userData.completed) {
             router.push("/register2");
           } else if (userData.type == "provider" && userData.completed) {

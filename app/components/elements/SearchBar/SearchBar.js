@@ -5,7 +5,7 @@ import { useState } from "react";
 
 export default function SearchBar() {
   const router = useRouter();
-  const [query, setQuery] = useState(router.query.q);
+  const [query, setQuery] = useState(router.query.q || "");
 
   const handleChange = (event) => {
     const value = event.target.value;

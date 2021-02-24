@@ -36,12 +36,20 @@ export default async function handler(req, res) {
     }
 
     const appointments = await Appointment.find({
-      startDate: { $gte: datePicked, $lte: tomorrowDate },
+      startDate: {
+        $gte: new Date(datePicked).toISOString(),
+        $lte: new Date(tomorrowDate).toISOString(),
+      },
       serviceId: id,
       status: { $in: statuses },
     }).select(["startDate", "endDate", "status"]);
 
-    return res.status(200).json({ success: true, data: appointments });
+    return res.status(200).json({
+      success: true,
+      data: appointments,
+      datePicked: new Date(datePicked).toISOString(),
+      tomorrowDate: new Date(tomorrowDate).toISOString(),
+    });
   }
 
   if (method == "POST") {

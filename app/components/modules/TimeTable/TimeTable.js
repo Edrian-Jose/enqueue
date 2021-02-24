@@ -16,6 +16,13 @@ export default function TimeTable({ className, appointments, service }) {
     );
   });
 
+  appointments = appointments.map((appointment) => {
+    let d = appointment.startDate;
+    let d2 = appointment.endDate;
+    appointment.startDate = new Date(d);
+    appointment.endDate = new Date(d2);
+    return appointment;
+  });
   const filteredAppointments = appointments.filter((appointment) => {
     return (
       appointment.status == "Approved" || appointment.status == "Completed"

@@ -39,7 +39,7 @@ export default function Navbar(props) {
     if (auth) {
       const userData = jwt_decode(auth);
       setUser(userData);
-      globals.sharedState.setUser(userData);
+      globals.methods.setUser(userData);
       const path = router.pathname;
       const conditions = [
         userData.type == "customer" && customerNotAllowedPaths.includes(path),

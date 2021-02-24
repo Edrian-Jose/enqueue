@@ -3,17 +3,24 @@ import moment from "moment";
 import Button from "./../../elements/Button/Button";
 import { http } from "../../../utils/apiMethods";
 import { toast } from "react-toastify";
+import { useAppContext } from "../../../context/state";
 
 export default function ApproveDialog({ appointment, callback }) {
   const [appointmentEndDate, setAppointmentEndDate] = useState(
     moment(appointment.startDate)
   );
   const [remarks, setRemarks] = useState("");
-
+  const globals = useAppContext();
   const changeDateHandler = (e) => {
     const val = e.target.value;
     const n = moment(val);
     setAppointmentEndDate(n);
+  };
+
+  const reset = () => {
+    setAppointmentEndDate(moment(appointment.startDate));
+    setRemarks("");
+    globals.methods.setState(false);
   };
 
   const approve = () => {
@@ -29,6 +36,7 @@ export default function ApproveDialog({ appointment, callback }) {
       .then((data) => {
         if (data.success) {
           toast.success("Appointment has been aprroved");
+          reset();
           callback(data.data);
         } else {
           toast.error(data.message);

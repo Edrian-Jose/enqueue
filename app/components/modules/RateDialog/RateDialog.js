@@ -2,18 +2,48 @@ import { useState } from "react";
 import moment from "moment";
 import Button from "./../../elements/Button/Button";
 import dynamic from "next/dynamic";
+import { useAppContext } from "../../../context/state";
 
 const StarRatings = dynamic(() => import("react-star-ratings"), {
   ssr: false,
 });
 
-export default function RateDialog({appointment}) {
-  const [appointmentRate, setAppointmentRate] = useState(0);
-
+export default function RateDialog({ appointment, calback }) {
+  const [appointmentRate, setAppointmentRate] = useState(3);
+  const globals = useAppContext();
   const changeRateHandler = (e) => {
     const val = parseFloat(e);
     setAppointmentRate(val);
   };
+
+  const reset = () => {
+    setAppointmentRate(3);
+    globals.methods.useState(false);
+  };
+
+  const rate = () => {
+    const req = {
+      _id: appointment._id,
+      rating: appointmentRate,
+    };
+    if (remarks) {
+      req["remarks"] = remarks;
+    }
+    http("POST", "/api/customer/rate", req)
+      .then((data) => {
+        if (data.success) {
+          toast.success("Appointment had been rated ");
+          reset();
+          callback(data.data);
+        } else {
+          toast.error(data.message);
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
+
   return (
     <div>
       <div className="flex">
@@ -32,7 +62,7 @@ export default function RateDialog({appointment}) {
       </div>
 
       <div className="mt-4 flex flex-row-reverse">
-        <Button>Confirm</Button>
+        <Button onClick={() => rate()}>Confirm</Button>
       </div>
     </div>
   );

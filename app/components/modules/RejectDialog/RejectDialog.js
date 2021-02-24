@@ -3,9 +3,16 @@ import moment from "moment";
 import Button from "./../../elements/Button/Button";
 import { http } from "../../../utils/apiMethods";
 import { toast } from "react-toastify";
+import { useAppContext } from "../../../context/state";
 
 export default function RejectDialog({ appointment, callback }) {
   const [remarks, setRemarks] = useState("");
+  const globals = useAppContext();
+
+  const reset = () => {
+    setRemarks("");
+    globals.methods.setState(false);
+  };
 
   const reject = () => {
     const req = {
@@ -19,6 +26,7 @@ export default function RejectDialog({ appointment, callback }) {
       .then((data) => {
         if (data.success) {
           toast.success("Appointment has been rejected");
+          reset();
           callback(data.data);
         } else {
           toast.error(data.message);

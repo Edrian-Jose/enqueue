@@ -1,12 +1,15 @@
 import { useState } from "react";
 import moment from "moment";
 import Button from "./../../elements/Button/Button";
+import { http } from "../../../utils/apiMethods";
+import { toast } from "react-toastify";
+import { useAppContext } from "../../../context/state";
 
-export default function CancelDialog({ appointment }) {
+export default function CancelDialog({ appointment, callback }) {
   const [appointmentStartDate, setAppointmentStartDate] = useState(
     moment(appointment.startDate).add(1, "m") || moment()
   );
-
+  const globals = useAppContext();
   const changeDateHandler = (e) => {
     const val = e.target.value;
     const n = moment(val);
@@ -18,7 +21,25 @@ export default function CancelDialog({ appointment }) {
       parseInt(appointmentStartDate.format("x"))
   );
 
-  const cancel = () => {};
+  const reset = () => {
+    globals.methods.setState(false);
+  };
+
+  const cancel = () => {
+    http("DELETE", `/api/provider/appointments?id=${appointment._id}`)
+      .then((data) => {
+        if (data.success) {
+          toast.success("Appointment has been cancelled");
+          reset();
+          callback(data.data);
+        } else {
+          toast.error(data.message);
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
 
   return (
     <div>
@@ -50,7 +71,14 @@ export default function CancelDialog({ appointment }) {
       </div>
 
       <div className="mt-4 flex flex-row-reverse">
-        <Button disabled={diff != 0}>Confirm</Button>
+        <Button
+          disabled={diff != 0}
+          onClick={() => {
+            cancel();
+          }}
+        >
+          Confirm
+        </Button>
       </div>
     </div>
   );

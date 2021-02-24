@@ -14,6 +14,7 @@ import moment from "moment";
 import { http } from "../../app/utils/apiMethods";
 import { server } from "../../app/utils/config";
 import jwt_decode from "jwt-decode";
+import { toast } from "react-toastify";
 
 function Service({ service, serviceAppointments }) {
   const router = useRouter();
@@ -25,6 +26,31 @@ function Service({ service, serviceAppointments }) {
   const { dialog } = router.query;
 
   const globalState = useAppContext();
+
+  const addAppointment = (appointment) => {
+    const tempAppointments = [...appointments];
+    tempAppointments.push(appointment);
+    setAppointments(tempAppointments);
+  };
+
+  const changeAppointment = (appointment) => {
+    let tempAppointments = [...appointments];
+    tempAppointments = tempAppointments.map((a) => {
+      if (a._id == appointment._id) {
+        a = appointment;
+      }
+      return a;
+    });
+    setAppointments(tempAppointments);
+  };
+
+  const deleteAppointment = (appointment) => {
+    let tempAppointments = [...appointments];
+    tempAppointments = tempAppointments.filter((a) => {
+      return a._id != appointment._id;
+    });
+    setAppointments(tempAppointments);
+  };
 
   const getAppointments = () => {
     const auth = localStorage.getItem("auth");
@@ -75,57 +101,105 @@ function Service({ service, serviceAppointments }) {
   };
 
   const openEnqueueDialog = (appointment) => {
-    globalState.methods.setContent(<EnqueueDialog serviceId={service._id} />);
+    globalState.methods.setContent(
+      <EnqueueDialog serviceId={service._id} callback={addAppointment} />
+    );
     globalState.methods.setTitle("Enqueue an appointment");
     globalState.methods.setState(true);
   };
 
   const openCancelDialog = (appointment) => {
-    globalState.methods.setContent(<CancelDialog appointment={appointment} />);
+    globalState.methods.setContent(
+      <CancelDialog appointment={appointment} callback={deleteAppointment} />
+    );
     globalState.methods.setTitle("Cancel appointment");
     globalState.methods.setState(true);
   };
 
   const openRateDialog = (appointment) => {
-    globalState.methods.setContent(<RateDialog appointment={appointment} />);
+    globalState.methods.setContent(
+      <RateDialog appointment={appointment} callback={deleteAppointment} />
+    );
     globalState.methods.setTitle("Rate appointment");
     globalState.methods.setState(true);
   };
 
-  const onDueAppointments = appointments.filter((appointment) => {
-    const now = moment();
-    return (
-      appointment.status == "Approved" &&
-      appointment.endDate &&
-      moment(appointment.startDate) <= now &&
-      moment(appointment.endDate) > now
-    );
-  });
+  const dismiss = (appointment) => {
+    http("DELETE", `/api/provider/appointments?id=${appointment._id}`)
+      .then((data) => {
+        if (data.success) {
+          toast.success("Appointment has been dismissed");
+          reset();
+          callback(data.data);
+        } else {
+          toast.error(data.message);
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
 
-  const completedAppointments = appointments.filter((appointment) => {
-    const now = moment();
-    return appointment.status == "Completed" && !appointment.rating;
-  });
+  const onDueAppointments = appointments
+    .filter((appointment) => {
+      const now = moment();
+      return (
+        appointment.status == "Approved" &&
+        appointment.endDate &&
+        moment(appointment.startDate) <= now &&
+        moment(appointment.endDate) > now
+      );
+    })
+    .sort((a, b) => {
+      return moment(a.startDate).format("x") - moment(b.startDate).format("x");
+    });
 
-  const pendingApprovalAppointments = appointments.filter((appointment) => {
-    const now = moment();
-    return (
-      appointment.status == "Pending Approval" &&
-      moment(appointment.startDate) > now
-    );
-  });
+  const completedAppointments = appointments
+    .filter((appointment) => {
+      const now = moment();
+      return appointment.status == "Completed" && !appointment.rating;
+    })
+    .sort((a, b) => {
+      return moment(a.startDate).format("x") - moment(b.startDate).format("x");
+    });
 
-  const approvedAppointments = appointments.filter((appointment) => {
-    const now = moment();
-    return (
-      appointment.status == "Approved" && moment(appointment.startDate) > now
-    );
-  });
+  const pendingApprovalAppointments = appointments
+    .filter((appointment) => {
+      const now = moment();
+      return (
+        appointment.status == "Pending Approval" &&
+        moment(appointment.startDate) > now
+      );
+    })
+    .sort((a, b) => {
+      return moment(a.startDate).format("x") - moment(b.startDate).format("x");
+    });
+
+  const approvedAppointments = appointments
+    .filter((appointment) => {
+      const now = moment();
+      return (
+        appointment.status == "Approved" && moment(appointment.startDate) > now
+      );
+    })
+    .sort((a, b) => {
+      return moment(a.startDate).format("x") - moment(b.startDate).format("x");
+    });
+
+  const rejectedAppointments = appointments
+    .filter((appointment) => {
+      const now = moment();
+      return appointment.status == "Rejected";
+    })
+    .sort((a, b) => {
+      return moment(a.startDate).format("x") - moment(b.startDate).format("x");
+    });
 
   const appointmentsCount =
     onDueAppointments.length +
     pendingApprovalAppointments.length +
     completedAppointments.length +
+    rejectedAppointments.length +
     approvedAppointments.length;
 
   const createCards = (appointments) => {
@@ -139,6 +213,16 @@ function Service({ service, serviceAppointments }) {
             }}
           >
             Rate
+          </Button>
+        );
+      } else if (appointment.status == "Rejected") {
+        el = (
+          <Button
+            onClick={() => {
+              dismiss(appointment);
+            }}
+          >
+            Dismiss
           </Button>
         );
       } else {
@@ -167,6 +251,7 @@ function Service({ service, serviceAppointments }) {
     pendingApprovalAppointments
   );
   const approvedAppointmentCards = createCards(approvedAppointments);
+  const rejectedAppointmentCards = createCards(rejectedAppointments);
 
   return (
     <div>
@@ -211,6 +296,7 @@ function Service({ service, serviceAppointments }) {
               <div>{approvedAppointmentCards}</div>
               <div>{completedAppointmentCards}</div>
               <div>{pendingApprovalAppointmentCards}</div>
+              <div>{rejectedAppointmentCards}</div>
             </div>
           ) : null}
         </div>

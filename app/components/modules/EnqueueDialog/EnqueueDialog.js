@@ -5,7 +5,7 @@ import { useAppContext } from "../../../context/state";
 import { http } from "../../../utils/apiMethods";
 import { toast } from "react-toastify";
 
-export default function EnqueueDialog({ serviceId }) {
+export default function EnqueueDialog({ serviceId, callback }) {
   const [apppointmentDate, setApppointmentDate] = useState(moment());
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -21,7 +21,12 @@ export default function EnqueueDialog({ serviceId }) {
       setDescription(val);
     }
   };
-
+  const reset = () => {
+    setApppointmentDate(moment());
+    setTitle("");
+    setDescription("");
+    globals.methods.setState(false);
+  };
   const enqueue = () => {
     const req = {
       title,
@@ -41,6 +46,8 @@ export default function EnqueueDialog({ serviceId }) {
       .then((data) => {
         if (data.success) {
           toast.success("Appointment Created currently pending for approval ");
+          reset();
+          callback(data.data);
         } else {
           toast.error(data.message);
         }

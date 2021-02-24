@@ -126,7 +126,9 @@ export default function Dashboard() {
   };
 
   const openCancelDialog = (appointment) => {
-    globalState.methods.setContent(<CancelDialog appointment={appointment} />);
+    globalState.methods.setContent(
+      <CancelDialog appointment={appointment} callback={deleteAppointment} />
+    );
     globalState.methods.setTitle("Cancel appointment");
     globalState.methods.setState(true);
   };
@@ -140,39 +142,71 @@ export default function Dashboard() {
   };
 
   const completeAppointment = (appointment) => {
-    console.log("completed " + appointment.title);
+    const req = {
+      _id: appointment._id,
+      status: "Completed",
+    };
+
+    http("POST", "/api/provider/appointments", req)
+      .then((data) => {
+        if (data.success) {
+          toast.success("Appointment has been marked as completed");
+          deleteAppointment(appointment);
+        } else {
+          toast.error(data.message);
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   };
 
-  const onDueAppointments = appointments.filter((appointment) => {
-    const now = moment();
-    return (
-      moment(appointment.startDate) <= now &&
-      moment(appointment.endDate) > now &&
-      appointment.status == "Approved"
-    );
-  });
+  const onDueAppointments = appointments
+    .filter((appointment) => {
+      const now = moment();
+      return (
+        moment(appointment.startDate) <= now &&
+        moment(appointment.endDate) > now &&
+        appointment.status == "Approved"
+      );
+    })
+    .sort((a, b) => {
+      return moment(a.startDate).format("x") - moment(b.startDate).format("x");
+    });
 
-  const pendingCompletionAppointments = appointments.filter((appointment) => {
-    const now = moment();
-    return (
-      appointment.status == "Approved" && moment(appointment.endDate) < now
-    );
-  });
+  const pendingCompletionAppointments = appointments
+    .filter((appointment) => {
+      const now = moment();
+      return (
+        appointment.status == "Approved" && moment(appointment.endDate) < now
+      );
+    })
+    .sort((a, b) => {
+      return moment(a.startDate).format("x") - moment(b.startDate).format("x");
+    });
 
-  const pendingApprovalAppointments = appointments.filter((appointment) => {
-    const now = moment();
-    return (
-      appointment.status == "Pending Approval" &&
-      moment(appointment.startDate) > now
-    );
-  });
+  const pendingApprovalAppointments = appointments
+    .filter((appointment) => {
+      const now = moment();
+      return (
+        appointment.status == "Pending Approval" &&
+        moment(appointment.startDate) > now
+      );
+    })
+    .sort((a, b) => {
+      return moment(a.startDate).format("x") - moment(b.startDate).format("x");
+    });
 
-  const approvedAppointments = appointments.filter((appointment) => {
-    const now = moment();
-    return (
-      appointment.status == "Approved" && moment(appointment.startDate) > now
-    );
-  });
+  const approvedAppointments = appointments
+    .filter((appointment) => {
+      const now = moment();
+      return (
+        appointment.status == "Approved" && moment(appointment.startDate) > now
+      );
+    })
+    .sort((a, b) => {
+      return moment(a.startDate).format("x") - moment(b.startDate).format("x");
+    });
 
   const createCards = (appointments) => {
     const now = moment();
@@ -218,7 +252,7 @@ export default function Dashboard() {
                 openCancelDialog(appointment);
               }}
             >
-              Cancel
+              Mark as Cancelled
             </Button>
           </React.Fragment>
         );

@@ -75,7 +75,7 @@ export default async function handler(req, res) {
         .json({ success: false, message: "Invalid request" });
 
     if (appointmentReq.endDate) {
-      if (moment(appointmentReq.endDate) < moment(a.startDate)) {
+      if (moment(appointmentReq.endDate) <= moment(a.startDate)) {
         return res.status(400).json({
           success: false,
           message: "End datetime should be later than the start datetime",

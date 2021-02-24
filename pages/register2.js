@@ -121,7 +121,7 @@ export default function register2() {
                     }
                     style={{ backgroundColor: "var(--secondary)" }}
                   >
-                    Provider
+                    Proceed
                   </div>
                 </div>
               </div>

@@ -7,30 +7,26 @@ import jwt_decode from "jwt-decode";
 import { http } from "../app/utils/apiMethods";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
+import { useAppContext } from "../app/context/state";
 
 export default function register2() {
   const router = useRouter();
+  const globals = useAppContext();
   const [name, setName] = useState("");
   const [type, setType] = useState("");
   const [opentime, setOpenTime] = useState("");
   const [address, setAddress] = useState("");
+  const [img, setImg] = useState("");
 
-  const save = () => {
-    const user = jwt_decode(localStorage.getItem("auth"));
-
-    const req = {
-      name,
-      serviceType: type,
-      ownerId: user._id,
-      ownerName: user.name,
-      opentime,
-      address,
-    };
-
-    http("POST", "/api/services", req)
+  const getAuth = () => {
+    http("GET", "/api/getAuth")
       .then((data) => {
         if (data.success) {
-          router.push("/dashboard");
+          console.log("Redirecting to dashboard page");
+          localStorage.setItem("auth", data.data);
+          const userData = jwt_decode(data.data);
+          globals.methods.setUser(userData);
+          router.push("/register3");
         } else {
           toast.error(data.message);
         }
@@ -40,7 +36,38 @@ export default function register2() {
       });
   };
 
-  const disabled = !name || !type;
+  const save = () => {
+    const auth = localStorage.getItem("auth");
+    if (auth) {
+      const user = jwt_decode(auth);
+
+      const req = {
+        name,
+        serviceType: type,
+        ownerId: user._id,
+        ownerName: user.name,
+        opentime,
+        address,
+      };
+
+      http("POST", "/api/services", req)
+        .then((data) => {
+          if (data.success) {
+            toast.success("Service created");
+            getAuth();
+          } else {
+            toast.error(data.message);
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    } else {
+      toast.error("Authentication problem");
+    }
+  };
+
+  const disabled = !name || !type || !opentime || !address;
   return (
     <div>
       <Head>
@@ -85,7 +112,7 @@ export default function register2() {
               </div>
               <div className="flex">
                 <div className="m-2 flex-1">
-                  <div className="font-medium">Open Time</div>
+                  <div className="font-medium">Available Time</div>
                   <input
                     type="text"
                     value={opentime}

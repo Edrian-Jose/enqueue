@@ -4,11 +4,18 @@ import { encryptData, jwtSign } from "../../app/utils/apiAuth";
 import dbConnect from "./../../app/utils/dbConnect";
 import Joi from "joi";
 import bcrypt from "bcrypt";
+import { authToken, runMiddleware } from "../../app/utils/middlewares";
 
 export default async function handler(req, res) {
   const { method } = req;
 
   await dbConnect();
+
+  const { result, error } = await runMiddleware(req, res, authToken);
+  if (error) {
+    return res.status(400).json({ error, message: "Authentication failed" });
+  }
+
   if (method == "GET") {
     const { id, type } = req.query;
     if (!id)

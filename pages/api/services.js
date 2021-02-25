@@ -4,11 +4,18 @@ import { encryptData, jwtSign } from "../../app/utils/apiAuth";
 import dbConnect from "./../../app/utils/dbConnect";
 import Joi from "joi";
 import bcrypt from "bcrypt";
+import { authToken, runMiddleware } from "../../app/utils/middlewares";
 
 export default async function handler(req, res) {
   const { method } = req;
 
   await dbConnect();
+
+  const { error } = await runMiddleware(req, res, authToken);
+  if (error) {
+    return res.status(400).json({ error, message: "Authentication failed" });
+  }
+
   if (method == "GET") {
     const { q } = req.query;
     if (!q)
@@ -55,7 +62,7 @@ export default async function handler(req, res) {
 
     try {
       const service = await Service.create(serviceReq);
-      owner.completed = true;
+      owner.completed = 1;
       await owner.save();
       return res.status(201).json({ success: true, data: service });
     } catch (error) {

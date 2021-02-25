@@ -237,7 +237,7 @@ export default function Settings() {
                 </div>
                 <div className="flex">
                   <div className="m-2 flex-1">
-                    <div className="font-medium">Open Time</div>
+                    <div className="font-medium">Available Time</div>
                     <input
                       type="text"
                       value={opentime}

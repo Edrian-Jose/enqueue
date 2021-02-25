@@ -34,9 +34,7 @@ export default async function handler(req, res) {
         .status(400)
         .json({ success: false, message: "Invalid Password" });
     }
-
-    return res
-      .status(200)
-      .json({ success: true, data: user.generateAuthToken() });
+    const token = await user.generateAuthToken();
+    return res.status(200).json({ success: true, data: token });
   }
 }

@@ -3,6 +3,7 @@ import { encryptData, jwtSign } from "../../app/utils/apiAuth";
 import dbConnect from "./../../app/utils/dbConnect";
 import Joi from "joi";
 import bcrypt from "bcrypt";
+import { authToken, runMiddleware } from "../../app/utils/middlewares";
 
 export default async function handler(req, res) {
   const { method } = req;
@@ -10,6 +11,11 @@ export default async function handler(req, res) {
   await dbConnect();
 
   if (method == "GET") {
+    const { error } = await runMiddleware(req, res, authToken);
+    if (error) {
+      return res.status(400).json({ error, message: "Authentication failed" });
+    }
+
     const { id } = req.query;
     if (!id) {
       return res
@@ -41,12 +47,10 @@ export default async function handler(req, res) {
 
     try {
       userREQ.password = await encryptData(userREQ.password);
-      userREQ["completed"] = userREQ.userType == "customer";
+      userREQ["completed"] = userREQ.userType == "customer" ? 2 : 0;
       const user = await User.create(userREQ);
-
-      return res
-        .status(201)
-        .json({ success: true, data: user.generateAuthToken() });
+      const token = await user.generateAuthToken();
+      return res.status(201).json({ success: true, data: token });
     } catch (error) {
       return res
         .status(400)
@@ -55,6 +59,11 @@ export default async function handler(req, res) {
   }
 
   if (method == "PUT") {
+    const { error } = await runMiddleware(req, res, authToken);
+    if (error) {
+      return res.status(400).json({ error, message: "Authentication failed" });
+    }
+
     const userReq = req.body;
     const id = userReq._id;
     delete userReq._id;

@@ -31,10 +31,13 @@ export default function Navbar(props) {
       customer: "/",
       provider: "/dashboard",
       provider2: "/register2",
+      provider3: "/register3",
     };
     const customerNotAllowedPaths = ["/dashboard", "/register2"];
     const providerNotAllowedPaths = ["/search", "/"];
     const provider2NotAllowedPaths = ["/register2"];
+    const provider3NotAllowedPaths = ["/register3"];
+    const providerIncNotAllowedPaths = ["/dashboard"];
     const NotAllowedPaths = ["/login", "/register"];
     const NoAuthNotAllowedPaths = ["/settings", "/dashboard", "/register2"];
     if (auth) {
@@ -46,8 +49,14 @@ export default function Navbar(props) {
         userData.type == "customer" && customerNotAllowedPaths.includes(path),
         userData.type == "provider" && providerNotAllowedPaths.includes(path),
         userData.type == "provider" &&
-          userData.completed &&
+          userData.completed != 2 &&
+          providerIncNotAllowedPaths.includes(path),
+        userData.type == "provider" &&
+          userData.completed > 0 &&
           provider2NotAllowedPaths.includes(path),
+        userData.type == "provider" &&
+          userData.completed > 1 &&
+          provider3NotAllowedPaths.includes(path),
         NotAllowedPaths.includes(path),
       ];
 
@@ -55,8 +64,10 @@ export default function Navbar(props) {
         if (history.length > 2) {
           router.back();
         } else {
-          if (userData.type == "provider" && !userData.completed) {
+          if (userData.type == "provider" && userData.completed == 0) {
             router.replace(redirects["provider2"]);
+          } else if (userData.type == "provider" && userData.completed == 1) {
+            router.replace(redirects["provider3"]);
           } else {
             router.replace(redirects[userData.type]);
           }

@@ -10,4 +10,8 @@ const jwtSign = (obj) => {
   return jwt.sign(obj, process.env.PRIVATE_KEY);
 };
 
-export { encryptData, jwtSign };
+const jwtVerify = (obj) => {
+  return jwt.verify(obj, process.env.PRIVATE_KEY);
+};
+
+export { encryptData, jwtSign, jwtVerify };

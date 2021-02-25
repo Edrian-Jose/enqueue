@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import Joi from "joi";
 import { jwtSign } from "../utils/apiAuth";
-
+import { Service } from "./Service";
 const UserSchema = new mongoose.Schema({
   name: {
     first: {
@@ -34,8 +34,8 @@ const UserSchema = new mongoose.Schema({
     required: true,
   },
   completed: {
-    type: Boolean,
-    default: false,
+    type: Number,
+    default: 0,
     required: true,
   },
 });
@@ -44,13 +44,21 @@ UserSchema.methods.fullname = function () {
   return `${this.name.first} ${this.name.last}`;
 };
 
-UserSchema.methods.generateAuthToken = function () {
+UserSchema.methods.generateAuthToken = async function () {
   const unsignedUser = {
     _id: this._id,
     name: this.fullname(),
     type: this.userType,
     completed: this.completed,
   };
+  if (this.userType == "provider") {
+    const service = await Service.findOne({
+      ownerId: this._id,
+    });
+    if (service) {
+      unsignedUser["serviceId"] = service._id;
+    }
+  }
 
   return jwtSign(unsignedUser);
 };

@@ -9,10 +9,17 @@ import dbConnect from "../../../app/utils/dbConnect";
 import Joi from "joi";
 import bcrypt from "bcrypt";
 import moment from "moment";
+import { authToken, runMiddleware } from "../../../app/utils/middlewares";
 
 export default async function handler(req, res) {
   const { method } = req;
   await dbConnect();
+
+  const { result, error } = await runMiddleware(req, res, authToken);
+  if (error) {
+    return res.status(400).json({ error, message: "Authentication failed" });
+  }
+
   if (method == "GET") {
     const { id, date, type } = req.query;
     const datePicked = moment(date).format("YYYY-MM-DDTHH:mm:ss");

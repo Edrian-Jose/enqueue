@@ -24,10 +24,12 @@ export default function login() {
         if (data.success) {
           localStorage.setItem("auth", data.data);
           const userData = jwt_decode(data.data);
-          globals.methods.setUser(data.data);
-          if (userData.type == "provider" && !userData.completed) {
+          globals.methods.setUser(userData);
+          if (userData.type == "provider" && userData.completed == 0) {
             router.push("/register2");
-          } else if (userData.type == "provider" && userData.completed) {
+          } else if (userData.type == "provider" && userData.completed == 1) {
+            router.push("/register3");
+          } else if (userData.type == "provider" && userData.completed == 2) {
             router.push("/dashboard");
           } else {
             router.push("/");

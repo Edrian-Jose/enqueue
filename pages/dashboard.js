@@ -32,58 +32,68 @@ export default function Dashboard() {
 
   const getServiceDetails = () => {
     const auth = localStorage.getItem("auth");
-    const user = jwt_decode(auth);
+    if (auth) {
+      const user = jwt_decode(auth);
 
-    http("GET", `${server}/api/service?id=${user._id}&type=provider`)
-      .then((d) => {
-        if (d.success) {
-          setService(d.data);
-        } else {
-          console.error("Failed to get service details", d.message);
-        }
-      })
-      .catch((e) => console.error(e));
+      http("GET", `${server}/api/service?id=${user._id}&type=provider`)
+        .then((d) => {
+          if (d.success) {
+            setService(d.data);
+          } else {
+            console.error("Failed to get service details", d.message);
+          }
+        })
+        .catch((e) => console.error(e));
+    } else {
+      toast.error("Authentication Problem");
+    }
   };
 
   const getTableAppointments = (date, callback) => {
     const auth = localStorage.getItem("auth");
-    const user = jwt_decode(auth);
+    if (auth) {
+      const user = jwt_decode(auth);
 
-    http(
-      "GET",
-      `${server}/api/provider/appointments?id=${user._id}&date=${moment(
-        date
-      ).format("YYYY-MM-DD")}&type=provider`
-    )
-      .then((d) => {
-        if (d.success) {
-          if (d.data) {
-            setTableAppointments(d.data);
-            callback(false);
+      http(
+        "GET",
+        `${server}/api/provider/appointments?id=${user._id}&date=${moment(
+          date
+        ).format("YYYY-MM-DD")}&type=provider`
+      )
+        .then((d) => {
+          if (d.success) {
+            if (d.data) {
+              setTableAppointments(d.data);
+              callback(false);
+            }
+          } else {
+            console.error("Failed to get table appointments", d.message);
           }
-        } else {
-          console.error("Failed to get table appointments", d.message);
-        }
-      })
-      .catch((e) => console.error(e));
+        })
+        .catch((e) => console.error(e));
+    } else {
+      toast.error("Authentication Problem");
+    }
   };
 
   const getAppointments = () => {
     const auth = localStorage.getItem("auth");
-    const user = jwt_decode(auth);
+    if (auth) {
+      const user = jwt_decode(auth);
 
-    http(
-      "GET",
-      `${server}/api/customer/appointments?serviceId=${user._id}&id=${user._id}&type=provider`
-    )
-      .then((d) => {
-        if (d.success) {
-          setAppointments(d.data);
-        } else {
-          console.error("Failed to get appointments", d.message);
-        }
-      })
-      .catch((e) => console.error(e));
+      http(
+        "GET",
+        `${server}/api/customer/appointments?serviceId=${user._id}&id=${user._id}&type=provider`
+      )
+        .then((d) => {
+          if (d.success) {
+            setAppointments(d.data);
+          } else {
+            console.error("Failed to get appointments", d.message);
+          }
+        })
+        .catch((e) => console.error(e));
+    }
   };
 
   const handleDateChange = (date, callback) => {

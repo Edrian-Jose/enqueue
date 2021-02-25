@@ -11,11 +11,6 @@ export default async function handler(req, res) {
 
   await dbConnect();
 
-  const { result, error } = await runMiddleware(req, res, authToken);
-  if (error) {
-    return res.status(400).json({ error, message: "Authentication failed" });
-  }
-
   if (method == "GET") {
     const { id, type } = req.query;
     if (!id)
@@ -39,6 +34,10 @@ export default async function handler(req, res) {
   }
 
   if (method == "PUT") {
+    const { result, error } = await runMiddleware(req, res, authToken);
+    if (error) {
+      return res.status(400).json({ error, message: "Authentication failed" });
+    }
     const serviceReq = req.body;
     const id = serviceReq._id;
     delete serviceReq._id;

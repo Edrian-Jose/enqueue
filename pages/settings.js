@@ -5,13 +5,15 @@ import { useState, useEffect } from "react";
 import jwt_decode from "jwt-decode";
 import { toast } from "react-toastify";
 import { server } from "./../app/utils/config";
-import { http } from "./../app/utils/apiMethods";
+import { http, httpForm } from "./../app/utils/apiMethods";
+import { useAppContext } from "../app/context/state";
 
 export default function Settings() {
+  const globals = useAppContext();
   const [userToken, setUserToken] = useState({
     type: "customer",
   });
-  const [serviceId, setServiceId] = useState("");
+  const [serviceId, setServiceId] = useState("TEMP");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [password, setPassword] = useState("");
@@ -20,6 +22,8 @@ export default function Settings() {
   const [type, setType] = useState("");
   const [opentime, setOpenTime] = useState("");
   const [address, setAddress] = useState("");
+  const [img, setImg] = useState({});
+  const [imgPath, setImgPath] = useState(`./serviceImages/${serviceId}.jpg`);
   const disabled = !firstName || !lastName || password != cpassword;
   const disabled2 = !name || !type;
 
@@ -47,11 +51,29 @@ export default function Settings() {
           setType(service.serviceType);
           setOpenTime(service.opentime);
           setAddress(service.address);
+          setImgPath(`/serviceImages/${service._id}.jpg`);
         } else {
           toast.error("Failed to load service data");
         }
       })
       .catch((e) => console.error(e));
+  };
+
+  const getAuth = () => {
+    http("GET", "/api/getAuth")
+      .then((data) => {
+        if (data.success) {
+          console.log("Redirecting to dashboard page");
+          localStorage.setItem("auth", data.data);
+          const userData = jwt_decode(data.data);
+          globals.methods.setUser(userData);
+        } else {
+          toast.error(data.message);
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   };
 
   const saveAccount = () => {
@@ -72,12 +94,44 @@ export default function Settings() {
           const user = d.data;
           setFirstName(user.name.first);
           setLastName(user.name.last);
+          getAuth();
           toast.success("Account info saved");
         } else {
           toast.error("Failed to save account data");
         }
       })
       .catch((e) => console.error(e));
+  };
+
+  const upload = () => {
+    const form = new FormData();
+    const fileName = img.name;
+    const splittedFileName = fileName.split(".");
+    const fileExtension = splittedFileName[splittedFileName.length - 1];
+    const serviceId = globals.sharedState.user.serviceId;
+    const newFileName = `${serviceId}.${fileExtension}`;
+
+    if (fileExtension == "jpg") {
+      setImgPath(`/serviceImages/TEMP.jpg`);
+      form.append("media", img, newFileName);
+      form.append("_id", globals.sharedState.user._id);
+
+      httpForm("/api/serviceImg", form)
+        .then((d) => {
+          const data = d;
+          if (data.success) {
+            setImgPath(`/serviceImages/${serviceId}.jpg`);
+            toast.success("Uploaded");
+          } else {
+            toast.error(data.message);
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    } else {
+      toast.warning("Image should be of type jpg (.jpg)");
+    }
   };
 
   const saveService = () => {
@@ -274,6 +328,71 @@ export default function Settings() {
                       style={{ backgroundColor: "var(--secondary)" }}
                     >
                       SAVE
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : null}
+
+        {userToken.type == "provider" ? (
+          <div className="container mx-auto">
+            <div
+              className="h-auto mx-auto flex border shadow-sm mt-16"
+              style={{ maxWidth: "42rem" }}
+            >
+              <div className="flex items-center flex-1">
+                <div className="flex flex-1 flex-col p-14">
+                  <div className="font-extrabold text-3xl text-center mb-8">
+                    Service Photo
+                  </div>
+                  <div className="flex">
+                    <div className="m-2 flex-1">
+                      <div className="font-medium">Upload File</div>
+                      <input
+                        type="file"
+                        onChange={(e) => {
+                          setImg(e.target.files[0]);
+                          setImgPath(URL.createObjectURL(e.target.files[0]));
+                        }}
+                        className="bg-transparent border p-2 w-full"
+                      />
+                    </div>
+                  </div>
+                  {imgPath ? (
+                    <div className="flex">
+                      <div className="m-2 flex-1">
+                        <div className="font-medium">Photo Preview (16:9)</div>
+                        <img
+                          src={imgPath}
+                          className="object-cover mx-auto"
+                          style={{
+                            width: "33.778rem",
+                            height: "19rem",
+                          }}
+                        />
+                      </div>
+                    </div>
+                  ) : null}
+                  <div className="flex mt-4">
+                    <div className="m-2 flex-1">
+                      <div
+                        onClick={() => {
+                          if (img && imgPath != "") {
+                            upload();
+                          }
+                        }}
+                        className={
+                          "font-bold text-center w-full p-3.5 text-white " +
+                          (!img || imgPath == ""
+                            ? "cursor-not-allowed"
+                            : "cursor-pointer")
+                        }
+                        style={{ backgroundColor: "var(--secondary)" }}
+                      >
+                        Upload
+                      </div>
                     </div>
                   </div>
                 </div>

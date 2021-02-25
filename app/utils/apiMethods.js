@@ -1,7 +1,10 @@
 import jwt_decode from "jwt-decode";
 
 async function http(method, url = "", data = {}) {
-  const auth = localStorage.getItem("auth");
+  let auth = null;
+  if (process.browser) {
+    auth = localStorage.getItem("auth");
+  }
 
   // Default options are marked with *
   const initialProps = {
@@ -24,7 +27,10 @@ async function http(method, url = "", data = {}) {
   return response.json(); // parses JSON response into native JavaScript objects
 }
 async function httpForm(url = "", data = {}) {
-  const auth = localStorage.getItem("auth");
+  let auth = null;
+  if (process.browser) {
+    auth = localStorage.getItem("auth");
+  }
   // Default options are marked with *
   const initialProps = {
     method: "POST",

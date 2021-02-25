@@ -41,22 +41,26 @@ export default function register2() {
     const serviceId = globals.sharedState.user.serviceId;
     const newFileName = `${serviceId}.${fileExtension}`;
 
-    form.append("media", img, newFileName);
-    form.append("_id", globals.sharedState.user._id);
+    if (fileExtension == "jpg") {
+      form.append("media", img, newFileName);
+      form.append("_id", globals.sharedState.user._id);
 
-    httpForm("/api/serviceImg", form)
-      .then((d) => {
-        const data = d;
-        if (data.success) {
-          toast.success("Uploaded");
-          getAuth();
-        } else {
-          toast.error(data.message);
-        }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+      httpForm("/api/serviceImg", form)
+        .then((d) => {
+          const data = d;
+          if (data.success) {
+            toast.success("Uploaded");
+            getAuth();
+          } else {
+            toast.error(data.message);
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    } else {
+      toast.warning("Image should be of type jpg (.jpg)");
+    }
   };
   return (
     <div>

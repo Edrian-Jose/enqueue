@@ -15,11 +15,6 @@ export default async function handler(req, res) {
   const { method } = req;
   await dbConnect();
 
-  const { result, error } = await runMiddleware(req, res, authToken);
-  if (error) {
-    return res.status(400).json({ error, message: "Authentication failed" });
-  }
-
   if (method == "GET") {
     const { id, date, type } = req.query;
     const datePicked = moment(date).format("YYYY-MM-DDTHH:mm:ss");
@@ -67,6 +62,10 @@ export default async function handler(req, res) {
 
   //update
   if (method == "POST") {
+    const { result, error } = await runMiddleware(req, res, authToken);
+    if (error) {
+      return res.status(400).json({ error, message: "Authentication failed" });
+    }
     const appointmentReq = req.body;
     const id = appointmentReq._id;
     delete appointmentReq._id;

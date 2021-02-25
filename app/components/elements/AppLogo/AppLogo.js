@@ -1,4 +1,5 @@
 import React from "react";
+import { useAppContext } from "../../../context/state";
 import styles from "./AppLogo.module.scss";
 export default function AppLogo() {
   return (

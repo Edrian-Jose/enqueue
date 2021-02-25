@@ -13,10 +13,15 @@ import { useAppContext } from "../../../context/state";
 export default function Navbar(props) {
   const router = useRouter();
   const globals = useAppContext();
-  let [user, setUser] = useState(null);
+  const home =
+    globals.sharedState.user &&
+    globals.sharedState.user.type &&
+    globals.sharedState.user.type == "provider"
+      ? "/dashboard"
+      : "/";
   const Nav = () => {
-    if (user && user.name) {
-      return <UserNav user={user} />;
+    if (globals.sharedState.user && globals.sharedState.user.name) {
+      return <UserNav user={globals.sharedState.user} />;
     } else if (router.pathname == "/login") {
       return <LoginNav />;
     } else if (router.pathname == "/register") {
@@ -42,7 +47,6 @@ export default function Navbar(props) {
     const NoAuthNotAllowedPaths = ["/settings", "/dashboard", "/register2"];
     if (auth) {
       const userData = jwt_decode(auth);
-      setUser(userData);
       globals.methods.setUser(userData);
       const path = router.pathname;
       const conditions = [
@@ -87,7 +91,7 @@ export default function Navbar(props) {
   return (
     <div className={styles.navbar}>
       <div className={styles.navdiv}>
-        <Link href="/">
+        <Link href={home}>
           <a>
             <AppLogo />
           </a>

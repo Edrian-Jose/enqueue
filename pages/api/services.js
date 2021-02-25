@@ -11,11 +11,6 @@ export default async function handler(req, res) {
 
   await dbConnect();
 
-  const { error } = await runMiddleware(req, res, authToken);
-  if (error) {
-    return res.status(400).json({ error, message: "Authentication failed" });
-  }
-
   if (method == "GET") {
     const { q } = req.query;
     if (!q)
@@ -37,6 +32,12 @@ export default async function handler(req, res) {
   }
 
   if (method == "POST") {
+    const { merror } = await runMiddleware(req, res, authToken);
+    if (merror) {
+      return res
+        .status(400)
+        .json({ error: merror, message: "Authentication failed" });
+    }
     const serviceReq = req.body;
     const { error } = validateService(serviceReq);
     if (error)

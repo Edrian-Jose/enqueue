@@ -101,10 +101,13 @@ function Service({ serviceDefault, serviceAppointments }) {
   };
 
   useEffect(() => {
+    const auth = localStorage.getItem("auth");
     if (dialog == "openEnqueue") {
       openEnqueueDialog();
     }
-    getAppointments();
+    if (auth) {
+      getAppointments();
+    }
   }, []);
 
   const handleDateChange = (date, callback) => {
@@ -128,9 +131,12 @@ function Service({ serviceDefault, serviceAppointments }) {
   };
 
   const handleRefresh = (date) => {
+    const auth = localStorage.getItem("auth");
     getServiceDetails();
-    getTableAppointments(date);
-    getAppointments();
+    getTableAppointments(moment(date).format("YYYY-MM-DD"));
+    if (auth) {
+      getAppointments();
+    }
   };
 
   const openEnqueueDialog = (appointment) => {
@@ -288,7 +294,7 @@ function Service({ serviceDefault, serviceAppointments }) {
   return (
     <div>
       <Head>
-        <title>Enqueue - {service.name}</title>
+        <title>Enqueue - {serviceDefault.name}</title>
         <link rel="icon" href="/favicon.svg" />
       </Head>
 

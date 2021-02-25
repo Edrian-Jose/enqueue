@@ -29,21 +29,29 @@ export default function Dashboard() {
   });
   const [tableAppointments, setTableAppointments] = useState([]);
   const [appointments, setAppointments] = useState([]);
+  const [refreshingService, setRefreshingService] = useState(false);
+  const [refreshingTable, setRefreshingTable] = useState(false);
+  const [refreshingAppointments, setRefreshingAppointments] = useState(false);
 
   const getServiceDetails = () => {
     const auth = localStorage.getItem("auth");
     if (auth) {
       const user = jwt_decode(auth);
 
+      setRefreshingService(true);
       http("GET", `${server}/api/service?id=${user._id}&type=provider`)
         .then((d) => {
+          setRefreshingService(false);
           if (d.success) {
             setService(d.data);
           } else {
             console.error("Failed to get service details", d.message);
           }
         })
-        .catch((e) => console.error(e));
+        .catch((e) => {
+          setRefreshingService(false);
+          console.error(e);
+        });
     } else {
       toast.error("Authentication Problem");
     }
@@ -54,6 +62,7 @@ export default function Dashboard() {
     if (auth) {
       const user = jwt_decode(auth);
 
+      setRefreshingTable(true);
       http(
         "GET",
         `${server}/api/provider/appointments?id=${user._id}&date=${moment(
@@ -61,6 +70,7 @@ export default function Dashboard() {
         ).format("YYYY-MM-DD")}&type=provider`
       )
         .then((d) => {
+          setRefreshingTable(false);
           if (d.success) {
             if (d.data) {
               setTableAppointments(d.data);
@@ -70,7 +80,10 @@ export default function Dashboard() {
             console.error("Failed to get table appointments", d.message);
           }
         })
-        .catch((e) => console.error(e));
+        .catch((e) => {
+          setRefreshingTable(false);
+          console.error(e);
+        });
     } else {
       toast.error("Authentication Problem");
     }
@@ -81,18 +94,23 @@ export default function Dashboard() {
     if (auth) {
       const user = jwt_decode(auth);
 
+      setRefreshingAppointments(true);
       http(
         "GET",
         `${server}/api/customer/appointments?serviceId=${user._id}&id=${user._id}&type=provider`
       )
         .then((d) => {
+          setRefreshingAppointments(false);
           if (d.success) {
             setAppointments(d.data);
           } else {
             console.error("Failed to get appointments", d.message);
           }
         })
-        .catch((e) => console.error(e));
+        .catch((e) => {
+          setRefreshingAppointments(false);
+          console.error(e);
+        });
     }
   };
 
@@ -101,9 +119,17 @@ export default function Dashboard() {
   };
 
   const handleRefresh = (date) => {
-    getServiceDetails();
-    getTableAppointments(date, (b) => {});
-    getAppointments();
+    const auth = localStorage.getItem("auth");
+    if (!refreshingService) {
+      getServiceDetails();
+    }
+    if (!refreshingTable) {
+      getTableAppointments(moment(date).format("YYYY-MM-DD"), (b) => {});
+    }
+
+    if (!refreshingAppointments && auth) {
+      getAppointments();
+    }
   };
   useEffect(() => {
     const auth = localStorage.getItem("auth");

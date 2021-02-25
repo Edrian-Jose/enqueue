@@ -24,6 +24,10 @@ function Service({ serviceDefault, serviceAppointments }) {
     serviceAppointments
   );
   const [appointments, setAppointments] = useState([]);
+  const [refreshingService, setRefreshingService] = useState(false);
+  const [refreshingTable, setRefreshingTable] = useState(false);
+  const [refreshingAppointments, setRefreshingAppointments] = useState(false);
+
   const { dialog, sid } = router.query;
 
   const globalState = useAppContext();
@@ -58,46 +62,61 @@ function Service({ serviceDefault, serviceAppointments }) {
 
     if (auth) {
       const user = jwt_decode(auth);
+      setRefreshingAppointments(true);
       http(
         "GET",
         `${server}/api/customer/appointments?serviceId=${sid}&id=${user._id}&type=customer`
       )
         .then((d) => {
+          setRefreshingAppointments(false);
           if (d.success) {
             setAppointments(d.data);
           } else {
             console.error("Failed to get appointments", d.message);
           }
         })
-        .catch((e) => console.error(e));
+        .catch((e) => {
+          setRefreshingAppointments(false);
+          console.error(e);
+        });
     }
   };
 
   const getServiceDetails = () => {
+    setRefreshingService(true);
     http("GET", `${server}/api/service?id=${sid}&type=customer`)
       .then((d) => {
+        setRefreshingService(false);
         if (d.success) {
           setService(d.data);
         } else {
           console.error("Failed to get service details", d.message);
         }
       })
-      .catch((e) => console.error(e));
+      .catch((e) => {
+        setRefreshingService(false);
+        console.error(e);
+      });
   };
 
   const getTableAppointments = (date) => {
+    setRefreshingTable(true);
     http(
       "GET",
       `${server}/api/provider/appointments?id=${sid}&date=${date}&type=customer`
     )
       .then((d) => {
+        setRefreshingTable(false);
         if (d.success) {
           setTableAppointments(d.data);
         } else {
           console.error("Failed to get table appointments", d.message);
         }
       })
-      .catch((e) => console.error(e));
+      .catch((e) => {
+        setRefreshingTable(false);
+        console.error(e);
+      });
   };
 
   useEffect(() => {
@@ -132,9 +151,14 @@ function Service({ serviceDefault, serviceAppointments }) {
 
   const handleRefresh = (date) => {
     const auth = localStorage.getItem("auth");
-    getServiceDetails();
-    getTableAppointments(moment(date).format("YYYY-MM-DD"));
-    if (auth) {
+    if (!refreshingService) {
+      getServiceDetails();
+    }
+    if (!refreshingTable) {
+      getTableAppointments(moment(date).format("YYYY-MM-DD"));
+    }
+
+    if (!refreshingAppointments && auth) {
       getAppointments();
     }
   };

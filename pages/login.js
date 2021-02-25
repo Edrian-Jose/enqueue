@@ -13,14 +13,17 @@ export default function login() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const globals = useAppContext();
   const login = () => {
     const req = {
       email,
       password,
     };
+    setLoading(true);
     http("POST", "/api/login", req)
       .then((data) => {
+        setLoading(false);
         if (data.success) {
           localStorage.setItem("auth", data.data);
           const userData = jwt_decode(data.data);
@@ -39,11 +42,12 @@ export default function login() {
         }
       })
       .catch((error) => {
+        setLoading(false);
         console.error("Error:", error);
       });
   };
 
-  const disabled = !email || !password;
+  const disabled = !email || !password || loading;
   return (
     <div>
       <Head>
@@ -94,7 +98,7 @@ export default function login() {
                     }
                   }}
                   className={
-                    "font-bold text-center w-72 p-3.5 " +
+                    "select-none font-bold text-center w-72 p-3.5 " +
                     (disabled ? "cursor-not-allowed" : "cursor-pointer")
                   }
                   style={{ backgroundColor: "var(--secondary)" }}

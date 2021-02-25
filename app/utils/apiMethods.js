@@ -33,7 +33,7 @@ async function httpForm(url = "", data = {}) {
   }
   // Default options are marked with *
   const initialProps = {
-    method: "POST",
+    method: "PATCH",
     mode: "cors",
     cache: "no-cache",
     credentials: "same-origin",

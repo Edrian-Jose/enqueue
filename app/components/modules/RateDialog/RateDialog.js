@@ -11,6 +11,7 @@ const StarRatings = dynamic(() => import("react-star-ratings"), {
 
 export default function RateDialog({ appointment, calback }) {
   const [appointmentRate, setAppointmentRate] = useState(3);
+  const [loading, setLoading] = useState(false);
   const globals = useAppContext();
   const changeRateHandler = (e) => {
     const val = parseFloat(e);
@@ -27,9 +28,10 @@ export default function RateDialog({ appointment, calback }) {
       _id: appointment._id,
       rating: appointmentRate,
     };
-    toast;
+    setLoading(true);
     http("POST", "/api/customer/rate", req)
       .then((data) => {
+        setLoading(false);
         if (data.success) {
           toast.success("Appointment had been rated ");
           reset();
@@ -39,6 +41,7 @@ export default function RateDialog({ appointment, calback }) {
         }
       })
       .catch((error) => {
+        setLoading(false);
         console.error("Error:", error);
       });
   };
@@ -61,7 +64,16 @@ export default function RateDialog({ appointment, calback }) {
       </div>
 
       <div className="mt-4 flex flex-row-reverse">
-        <Button onClick={() => rate()}>Confirm</Button>
+        <Button
+          disabled={loading}
+          onClick={() => {
+            if (!loading) {
+              rate();
+            }
+          }}
+        >
+          Confirm
+        </Button>
       </div>
     </div>
   );

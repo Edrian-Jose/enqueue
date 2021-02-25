@@ -23,9 +23,15 @@ export default function Settings() {
   const [opentime, setOpenTime] = useState("");
   const [address, setAddress] = useState("");
   const [img, setImg] = useState({});
-  const [imgPath, setImgPath] = useState(`./serviceImages/${serviceId}.jpg`);
-  const disabled = !firstName || !lastName || password != cpassword;
-  const disabled2 = !name || !type;
+  const [imgPath, setImgPath] = useState("/serviceImages/TEMP.jpg");
+
+  const [loadingAccount, setLoadingAccount] = useState(false);
+  const [loadingService, setLoadingService] = useState(false);
+  const [loadingUpload, setLoadingUpload] = useState(false);
+  const disabled =
+    !firstName || !lastName || password != cpassword || loadingAccount;
+  const disabled2 = !name || !type || loadingService;
+  const disabled3 = loadingUpload || !img;
 
   const loadAccount = (user) => {
     http("GET", `${server}/api/users?id=${user._id}`)
@@ -51,7 +57,7 @@ export default function Settings() {
           setType(service.serviceType);
           setOpenTime(service.opentime);
           setAddress(service.address);
-          setImgPath(`/serviceImages/${service._id}.jpg`);
+          setImgPath(service.photo || `serviceImages/TEMP.jpg`);
         } else {
           toast.error("Failed to load service data");
         }
@@ -87,9 +93,10 @@ export default function Settings() {
     if (password) {
       req["password"] = password;
     }
-
+    setLoadingAccount(true);
     http("PUT", "/api/users", req)
       .then((d) => {
+        setLoadingAccount(false);
         if (d.success) {
           const user = d.data;
           setFirstName(user.name.first);
@@ -100,7 +107,10 @@ export default function Settings() {
           toast.error("Failed to save account data");
         }
       })
-      .catch((e) => console.error(e));
+      .catch((e) => {
+        setLoadingAccount(false);
+        console.error(e);
+      });
   };
 
   const upload = () => {
@@ -109,24 +119,25 @@ export default function Settings() {
     const splittedFileName = fileName.split(".");
     const fileExtension = splittedFileName[splittedFileName.length - 1];
     const serviceId = globals.sharedState.user.serviceId;
-    const newFileName = `${serviceId}.${fileExtension}`;
 
-    if (fileExtension == "jpg") {
+    if (fileExtension == "jpg" || fileExtension == "png") {
       setImgPath(`/serviceImages/TEMP.jpg`);
-      form.append("media", img, newFileName);
-      form.append("_id", globals.sharedState.user._id);
-
+      form.append("media", img);
+      form.append("serviceId", serviceId);
+      setLoadingUpload(true);
       httpForm("/api/serviceImg", form)
         .then((d) => {
+          setLoadingUpload(false);
           const data = d;
           if (data.success) {
-            setImgPath(`/serviceImages/${serviceId}.jpg`);
+            setImgPath(data.data);
             toast.success("Uploaded");
           } else {
             toast.error(data.message);
           }
         })
         .catch((error) => {
+          setLoadingUpload(false);
           console.error("Error:", error);
         });
     } else {
@@ -142,9 +153,10 @@ export default function Settings() {
       opentime,
       address,
     };
-
+    setLoadingService(true);
     http("PUT", "/api/service", req)
       .then((d) => {
+        setLoadingService(false);
         if (d.success) {
           const service = d.data;
           setName(service.name);
@@ -156,7 +168,10 @@ export default function Settings() {
           toast.error("Failed to save service data");
         }
       })
-      .catch((e) => console.error(e));
+      .catch((e) => {
+        setLoadingService(false);
+        console.error(e);
+      });
   };
 
   useEffect(() => {
@@ -242,7 +257,7 @@ export default function Settings() {
                       }
                     }}
                     className={
-                      "font-bold text-center w-full p-3.5 text-white " +
+                      "select-none font-bold text-center w-full p-3.5 text-white " +
                       (disabled ? "cursor-not-allowed" : "cursor-pointer")
                     }
                     style={{ backgroundColor: "var(--primary)" }}
@@ -322,7 +337,7 @@ export default function Settings() {
                         }
                       }}
                       className={
-                        "font-bold text-center w-full p-3.5 text-white " +
+                        "select-none font-bold text-center w-full p-3.5 text-white " +
                         (disabled2 ? "cursor-not-allowed" : "cursor-pointer")
                       }
                       style={{ backgroundColor: "var(--secondary)" }}
@@ -379,15 +394,13 @@ export default function Settings() {
                     <div className="m-2 flex-1">
                       <div
                         onClick={() => {
-                          if (img && imgPath != "") {
+                          if (!disabled3) {
                             upload();
                           }
                         }}
                         className={
-                          "font-bold text-center w-full p-3.5 text-white " +
-                          (!img || imgPath == ""
-                            ? "cursor-not-allowed"
-                            : "cursor-pointer")
+                          "select-none font-bold text-center w-full p-3.5 text-white " +
+                          (disabled3 ? "cursor-not-allowed" : "cursor-pointer")
                         }
                         style={{ backgroundColor: "var(--secondary)" }}
                       >

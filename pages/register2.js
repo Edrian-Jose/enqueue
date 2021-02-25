@@ -17,10 +17,11 @@ export default function register2() {
   const [opentime, setOpenTime] = useState("");
   const [address, setAddress] = useState("");
   const [img, setImg] = useState("");
-
+  const [loading, setLoading] = useState(false);
   const getAuth = () => {
     http("GET", "/api/getAuth")
       .then((data) => {
+        setLoading(false);
         if (data.success) {
           console.log("Redirecting to dashboard page");
           localStorage.setItem("auth", data.data);
@@ -32,6 +33,7 @@ export default function register2() {
         }
       })
       .catch((error) => {
+        setLoading(false);
         console.error("Error:", error);
       });
   };
@@ -49,7 +51,7 @@ export default function register2() {
         opentime,
         address,
       };
-
+      setLoading(true);
       http("POST", "/api/services", req)
         .then((data) => {
           if (data.success) {
@@ -67,7 +69,7 @@ export default function register2() {
     }
   };
 
-  const disabled = !name || !type || !opentime || !address;
+  const disabled = !name || !type || !opentime || !address || loading;
   return (
     <div>
       <Head>
@@ -143,12 +145,12 @@ export default function register2() {
                       }
                     }}
                     className={
-                      "font-bold text-center w-full p-3.5 text-white " +
+                      "select-none font-bold text-center w-full p-3.5 text-white " +
                       (disabled ? "cursor-not-allowed" : "cursor-pointer")
                     }
                     style={{ backgroundColor: "var(--secondary)" }}
                   >
-                    Proceed
+                    Proceed to Step 3
                   </div>
                 </div>
               </div>

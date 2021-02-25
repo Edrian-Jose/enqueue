@@ -9,6 +9,7 @@ export default function ApproveDialog({ appointment, callback }) {
   const [appointmentEndDate, setAppointmentEndDate] = useState(
     moment(appointment.startDate)
   );
+  const [loading, setLoading] = useState(false);
   const [remarks, setRemarks] = useState("");
   const globals = useAppContext();
   const changeDateHandler = (e) => {
@@ -32,8 +33,10 @@ export default function ApproveDialog({ appointment, callback }) {
     if (remarks) {
       req["remarks"] = remarks;
     }
+    setLoading(true);
     http("POST", "/api/provider/appointments", req)
       .then((data) => {
+        setLoading(false);
         if (data.success) {
           toast.success("Appointment has been aprroved");
           reset();
@@ -43,6 +46,7 @@ export default function ApproveDialog({ appointment, callback }) {
         }
       })
       .catch((error) => {
+        setLoading(false);
         console.error("Error:", error);
       });
   };
@@ -120,8 +124,11 @@ export default function ApproveDialog({ appointment, callback }) {
       </div>
       <div className="mt-4 flex flex-row-reverse">
         <Button
+          disabled={loading}
           onClick={() => {
-            approve();
+            if (!loading) {
+              approve();
+            }
           }}
         >
           Confirm

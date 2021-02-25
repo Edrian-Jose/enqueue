@@ -9,6 +9,7 @@ export default function EnqueueDialog({ serviceId, callback }) {
   const [apppointmentDate, setApppointmentDate] = useState(moment());
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [loading, setLoading] = useState(false);
   const globals = useAppContext();
   const changeHandler = (e, prop) => {
     const val = e.target.value;
@@ -41,9 +42,10 @@ export default function EnqueueDialog({ serviceId, callback }) {
     if (description) {
       req["description"] = description;
     }
-
+    setLoading(true);
     http("POST", "/api/customer/appointments", req)
       .then((data) => {
+        setLoading(false);
         if (data.success) {
           toast.success("Appointment Created currently pending for approval ");
           reset();
@@ -53,11 +55,12 @@ export default function EnqueueDialog({ serviceId, callback }) {
         }
       })
       .catch((error) => {
+        setLoading(false);
         console.error("Error:", error);
       });
   };
 
-  const disabled = !title;
+  const disabled = !title || loading;
   return (
     <div>
       <div className="flex">

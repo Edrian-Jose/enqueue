@@ -14,10 +14,12 @@ export default function register2() {
   const globals = useAppContext();
   const [img, setImg] = useState({});
   const [imgPath, setImgPath] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const getAuth = () => {
     http("GET", "/api/getAuth")
       .then((data) => {
+        setLoading(false);
         if (data.success) {
           console.log("Redirecting to dashboard page");
           localStorage.setItem("auth", data.data);
@@ -29,6 +31,7 @@ export default function register2() {
         }
       })
       .catch((error) => {
+        setLoading(false);
         console.error("Error:", error);
       });
   };
@@ -39,12 +42,12 @@ export default function register2() {
     const splittedFileName = fileName.split(".");
     const fileExtension = splittedFileName[splittedFileName.length - 1];
     const serviceId = globals.sharedState.user.serviceId;
-    const newFileName = `${serviceId}.${fileExtension}`;
 
-    if (fileExtension == "jpg") {
-      form.append("media", img, newFileName);
-      form.append("_id", globals.sharedState.user._id);
+    if (fileExtension == "jpg" || fileExtension == "png") {
+      form.append("media", img);
+      form.append("serviceId", serviceId);
 
+      setLoading(true);
       httpForm("/api/serviceImg", form)
         .then((d) => {
           const data = d;
@@ -112,13 +115,13 @@ export default function register2() {
                 <div className="m-2 flex-1">
                   <div
                     onClick={() => {
-                      if (img && imgPath != "") {
+                      if (img && imgPath != "" && !loading) {
                         upload();
                       }
                     }}
                     className={
-                      "font-bold text-center w-full p-3.5 text-white " +
-                      (!img || imgPath == ""
+                      "select-none font-bold text-center w-full p-3.5 text-white " +
+                      (!img || imgPath == "" || loading
                         ? "cursor-not-allowed"
                         : "cursor-pointer")
                     }

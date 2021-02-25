@@ -1,5 +1,12 @@
-export default function Button({ children, className, ...others }) {
+export default function Button({
+  children,
+  className,
+  onClick,
+  disabled = false,
+  ...others
+}) {
   const styles = [
+    "select-none",
     "inline-block",
     "px-12",
     "py-3",
@@ -11,8 +18,18 @@ export default function Button({ children, className, ...others }) {
     others.disabled ? "" : "hover:shadow-lg",
     others.disabled ? "cursor-not-allowed" : "cursor-pointer",
   ];
+
+  const handleClick = () => {
+    if (!disabled) {
+      onClick();
+    }
+  };
   return (
-    <span className={styles.join(" ") + " " + className} {...others}>
+    <span
+      className={styles.join(" ") + " " + className}
+      onClick={() => handleClick()}
+      {...others}
+    >
       {children}
     </span>
   );

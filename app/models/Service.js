@@ -42,6 +42,9 @@ const ServiceSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  photo: {
+    type: String,
+  },
 });
 
 const Service =

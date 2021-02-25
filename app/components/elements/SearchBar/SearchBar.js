@@ -13,7 +13,7 @@ export default function SearchBar() {
   };
 
   const handleKeyPress = (event) => {
-    if (event.key === "Enter") {
+    if (event.key === "Enter" && query != "") {
       router.push("/search?q=" + event.target.value);
     }
   };

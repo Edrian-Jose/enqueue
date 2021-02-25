@@ -7,6 +7,7 @@ import { useAppContext } from "../../../context/state";
 
 export default function RejectDialog({ appointment, callback }) {
   const [remarks, setRemarks] = useState("");
+  const [loading, setLoading] = useState(false);
   const globals = useAppContext();
 
   const reset = () => {
@@ -22,8 +23,10 @@ export default function RejectDialog({ appointment, callback }) {
     if (remarks) {
       req["remarks"] = remarks;
     }
+    setLoading(true);
     http("POST", "/api/provider/appointments", req)
       .then((data) => {
+        setLoading(false);
         if (data.success) {
           toast.success("Appointment has been rejected");
           reset();
@@ -33,6 +36,7 @@ export default function RejectDialog({ appointment, callback }) {
         }
       })
       .catch((error) => {
+        setLoading(false);
         console.error("Error:", error);
       });
   };
@@ -98,6 +102,7 @@ export default function RejectDialog({ appointment, callback }) {
       </div>
       <div className="mt-4 flex flex-row-reverse">
         <Button
+          disabled={loading}
           onClick={() => {
             reject();
           }}

@@ -15,7 +15,7 @@ export default function register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [cpassword, setCPassword] = useState("");
-
+  const [loading, setLoading] = useState(false);
   const register = (type) => {
     const req = {
       name: {
@@ -26,9 +26,10 @@ export default function register() {
       password: password,
       userType: type,
     };
-
+    setLoading(true);
     http("POST", "/api/users", req)
       .then((data) => {
+        setLoading(false);
         if (data.success) {
           localStorage.setItem("auth", data.data);
           const userData = jwt_decode(data.data);
@@ -42,11 +43,12 @@ export default function register() {
         }
       })
       .catch((error) => {
+        setLoading(false);
         console.error("Error:", error);
       });
   };
 
-  const disabled = password != cpassword || !password;
+  const disabled = password != cpassword || !password || loading;
   return (
     <div>
       <Head>
@@ -132,7 +134,7 @@ export default function register() {
                       }
                     }}
                     className={
-                      "font-bold text-center w-full p-3.5 text-white " +
+                      "select-none font-bold text-center w-full p-3.5 text-white " +
                       (disabled ? "cursor-not-allowed" : "cursor-pointer")
                     }
                     style={{ backgroundColor: "var(--primary)" }}
@@ -148,7 +150,7 @@ export default function register() {
                       }
                     }}
                     className={
-                      "font-bold text-center w-full p-3.5 text-white " +
+                      "select-none font-bold text-center w-full p-3.5 text-white " +
                       (disabled ? "cursor-not-allowed" : "cursor-pointer")
                     }
                     style={{ backgroundColor: "var(--secondary)" }}

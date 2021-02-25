@@ -9,6 +9,7 @@ export default function CancelDialog({ appointment, callback }) {
   const [appointmentStartDate, setAppointmentStartDate] = useState(
     moment(appointment.startDate).add(1, "m") || moment()
   );
+  const [loading, setLoading] = useState(false);
   const globals = useAppContext();
   const changeDateHandler = (e) => {
     const val = e.target.value;
@@ -26,9 +27,11 @@ export default function CancelDialog({ appointment, callback }) {
   };
 
   const cancel = () => {
+    setLoading(true);
     http("DELETE", `/api/provider/appointments?id=${appointment._id}`)
       .then((data) => {
         if (data.success) {
+          setLoading(false);
           toast.success("Appointment has been cancelled");
           reset();
           callback(data.data);
@@ -37,6 +40,7 @@ export default function CancelDialog({ appointment, callback }) {
         }
       })
       .catch((error) => {
+        setLoading(false);
         console.error("Error:", error);
       });
   };
@@ -72,9 +76,11 @@ export default function CancelDialog({ appointment, callback }) {
 
       <div className="mt-4 flex flex-row-reverse">
         <Button
-          disabled={diff != 0}
+          disabled={diff != 0 || loading}
           onClick={() => {
-            cancel();
+            if (!loading && diff == 0) {
+              cancel();
+            }
           }}
         >
           Confirm

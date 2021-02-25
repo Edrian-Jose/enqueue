@@ -2,6 +2,7 @@ const fs = require("fs");
 const formidable = require("formidable-serverless");
 const path = require("path");
 import { User } from "../../app/models/User";
+import { publicFolder } from "../../app/utils/config";
 import { authToken, runMiddleware } from "../../app/utils/middlewares";
 import dbConnect from "./../../app/utils/dbConnect";
 
@@ -21,7 +22,7 @@ export default async (req, res) => {
 
   try {
     const data = await new Promise((resolve, reject) => {
-      const directory = "./public/serviceImages";
+      const directory = `${publicFolder}serviceImages`;
 
       const form = new formidable({
         uploadDir: directory,

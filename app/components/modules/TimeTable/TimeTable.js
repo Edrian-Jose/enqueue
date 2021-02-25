@@ -220,10 +220,7 @@ export default function TimeTable({
             completed appointments
           </div>
           <div className="mt-4">
-            <Button
-              style={{ backgroundColor: "var(--secondary)" }}
-              onClick={() => onRefresh(datePicked)}
-            >
+            <Button color="secondary" onClick={() => onRefresh(datePicked)}>
               Refresh
             </Button>
           </div>

@@ -24,6 +24,9 @@ export default async (req, res) => {
     const data = await new Promise((resolve, reject) => {
       const directory = `${publicFolder}serviceImages`;
 
+      fs.mkdir(directory, { recursive: true }, (err) => {
+        return console.log(err);
+      });
       const form = new formidable({
         uploadDir: directory,
       });

@@ -8,4 +8,4 @@ export const server = dev
   ? "http://localhost:3000"
   : "https://enqueue.vercel.app";
 
-export const publicFolder = dev ? "./public/" : serverPath;
+export const publicFolder = dev ? "./public/" : serverPath + "/";

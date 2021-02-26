@@ -18,6 +18,7 @@ import { toast } from "react-toastify";
 
 function Service({ serviceDefault, serviceAppointments }) {
   const router = useRouter();
+
   const [pickedDate, setPickedDate] = useState(moment());
   const [service, setService] = useState(serviceDefault);
   const [tableAppointments, setTableAppointments] = useState(
@@ -363,8 +364,7 @@ function Service({ serviceDefault, serviceAppointments }) {
 
 export async function getServerSideProps(context) {
   // Fetch data from external API
-  let serviceDefault = null;
-  let serviceAppointments = [];
+  let serviceDefault, serviceAppointments;
 
   await http(
     "GET",
@@ -374,7 +374,7 @@ export async function getServerSideProps(context) {
       if (d.success) {
         serviceDefault = d.data;
       } else {
-        console.errpr("Failed to get initial service details", d.message);
+        console.error("Failed to get initial service details", d.message);
       }
     })
     .catch((e) => console.error(e));
@@ -389,11 +389,16 @@ export async function getServerSideProps(context) {
       if (d.success) {
         serviceAppointments = d.data;
       } else {
-        console.errpr("Failed to get initial table appointments", d.message);
+        console.error("Failed to get initial table appointments", d.message);
       }
     })
     .catch((e) => console.error(e));
 
+  if (!serviceDefault || !serviceAppointments) {
+    return {
+      notFound: true,
+    };
+  }
   // Pass data to the page via props
   return { props: { serviceDefault, serviceAppointments } };
 }

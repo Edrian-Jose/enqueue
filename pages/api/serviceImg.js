@@ -78,7 +78,6 @@ handler.patch(upload.single("media"), async (req, res) => {
   res.status(200).json({
     success: true,
     data: profilePicture,
-    deleted: public_id || false,
   });
 });
 
